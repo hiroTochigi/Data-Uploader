@@ -28,6 +28,8 @@ class App extends Component {
           console.log(err);            
         }
         else{
+          console.log(resp.cols)
+          console.log(resp.rows)
           this.setState({
             dataLoaded: true,
             cols: resp.cols,
