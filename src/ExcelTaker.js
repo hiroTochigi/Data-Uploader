@@ -10,10 +10,13 @@ class ExcelTaker extends Component {
         isOpen: false,
         dataLoaded: false,
         isFormInvalid: false,
-        rows: null,
-        cols: null,
       }
       this.fileInput = React.createRef();
+      this.getRows = props.getRows.bind(this);
+    }
+
+    getData = (rows) => {
+        this.getRows(rows)
     }
   
     renderFile = (fileObj) => {
@@ -25,9 +28,8 @@ class ExcelTaker extends Component {
           else{
             this.setState({
               dataLoaded: true,
-              cols: resp.cols,
-              rows: resp.rows
             });
+            this.getData(resp.rows)
           }
         }); 
     }
@@ -67,8 +69,6 @@ class ExcelTaker extends Component {
     }
   
     render() {
-      const {rows, cols} = this.state
-      console.log(rows)
       return (
         <div>
           <Container>
