@@ -4,6 +4,7 @@ import './App.css';
 import { CONNECT_LIST } from './globalConf'
 import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
+import { makeConfiguration } from './modules/makeConfiguration'
 
 const monday = mondaySdk();
 
@@ -11,31 +12,20 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
-      haveConf: true,
+      haveConnectList: true,
+      haveConf: false,
       settings: {},
       context: {},
       boards: [],
-      columns: [],
+      mondayColumns: [],
+      configurations: [],
       rows: null,
     }
   }
 
   componentDidMount() {
-    monday.listen("settings", this.getSettings);
     monday.listen("context", this.getContext);
-    monday.listen("itemIds", this.getItemIds);
   }
-
-  getSettings = (res) => {
-    this.setState({ settings: res.data });
-    console.log("settings!", res.data);
-  };
-
-  getItemIds = (res) => {
-    const itemIds = {};
-    res.data.forEach((id) => (itemIds[id] = true));
-    this.setState({ itemIds: itemIds });
-  };
 
   getContext = (res) => {
     const context = res.data;
@@ -44,9 +34,9 @@ class App extends Component {
 
     const boardIds = context.boardIds || [context.boardId];
     monday
-      .api(`query { boards(ids:[${boardIds}]) { columns { title, type, settings_str, pos, id } }}`)
+      .api(`query { boards(ids:[${boardIds}]) { columns { title, type, settings_str, id } }}`)
       .then((res) => {
-        this.setState({ columns: res.data.boards[0].columns }, () => {
+        this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
           console.log(res.data.boards[0].columns)
         });
       });
@@ -56,9 +46,17 @@ class App extends Component {
     this.setState({rows})
   }
 
+  setHaveConf = (val) => {
+    this.setState({haveConf:val})
+  }
+
+
   render() {
-    console.log(CONNECT_LIST)
-    console.log(this.state.rows)
+    const { rows, mondayColumns, haveConf } = this.state;
+    if(!haveConf && rows !== null){
+      this.setState({configuration:makeConfiguration(rows, mondayColumns, this.setHaveConf)})
+    }
+    console.log(this.state.configurations)
     return (
       <div>
         <div>

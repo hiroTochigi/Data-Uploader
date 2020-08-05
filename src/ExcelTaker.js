@@ -10,6 +10,7 @@ class ExcelTaker extends Component {
         isOpen: false,
         dataLoaded: false,
         isFormInvalid: false,
+        uploadedFileName: '',
       }
       this.fileInput = React.createRef();
       this.getRows = props.getRows.bind(this);
