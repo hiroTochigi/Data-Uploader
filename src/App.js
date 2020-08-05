@@ -14,13 +14,14 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
+      headerIndex: 0,
       boardIds: '',
       settings: {},
       context: {},
       boards: [],
       mondayColumns: [],
       configuration: [],
-      rows: null,
+      localItemList: null,
     }
   }
 
@@ -45,19 +46,19 @@ class App extends Component {
   };
 
   getRows = (rows) => {
-    this.setState({rows})
+    this.setState({localItemList: rows})
   }
 
   setHaveConf = (val) => {
     this.setState({haveConf:val})
   }
 
-  setConfiguration = (rows, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(rows, mondayColumns, setHaveConf)})
+  setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)})
   }
 
   render() {
-    const { rows, mondayColumns, haveConf, configuration, boardIds } = this.state;
+    const { localItemList, mondayColumns, haveConf, configuration, boardIds, headerIndex } = this.state;
     
     return (
       <div>
@@ -78,7 +79,8 @@ class App extends Component {
           <Update 
             configuration={configuration}
             boardIds={boardIds}
-            rows={rows}
+            localItemList={localItemList}
+            headerIndex={headerIndex}
           />
           :  
           <ExcelTaker
@@ -101,7 +103,3 @@ class App extends Component {
 */
 
 export default App;
-
-/*
-`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}` take all board items with data
-*/
