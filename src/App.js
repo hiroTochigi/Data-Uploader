@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import mondaySdk from "monday-sdk-js";
 import './App.css';
-import { CONNECT_LIST } from './globalConf'
 import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration'
@@ -18,7 +17,7 @@ class App extends Component {
       context: {},
       boards: [],
       mondayColumns: [],
-      configurations: [],
+      configuration: [],
       rows: null,
     }
   }
@@ -50,13 +49,13 @@ class App extends Component {
     this.setState({haveConf:val})
   }
 
+  setConfiguration = (rows, mondayColumns, setHaveConf) => {
+    this.setState({configuration:makeConfiguration(rows, mondayColumns, setHaveConf)})
+  }
 
   render() {
     const { rows, mondayColumns, haveConf } = this.state;
-    if(!haveConf && rows !== null){
-      this.setState({configuration:makeConfiguration(rows, mondayColumns, this.setHaveConf)})
-    }
-    console.log(this.state.configurations)
+    
     return (
       <div>
         <div>
@@ -66,7 +65,12 @@ class App extends Component {
               <hr className="my-2" />
           </Jumbotron>
         </div>
-        <ExcelTaker getRows={this.getRows}/>
+        <ExcelTaker
+          getRows={this.getRows}
+          setConfiguration={this.setConfiguration} 
+          mondayColumns={mondayColumns}
+          setHaveConf={this.setHaveConf}
+          />
       </div>
     );
   }
