@@ -32,8 +32,7 @@ const addHeaderData = (colData, header) => {
             return colData
         }
     }
-    console.log('something wrong')
-    return colData
+    return false
 }
 
 const flipKeyValue = (obj) => {
@@ -62,6 +61,12 @@ const takeLabels = (data) =>{
     return data
 }
 
+const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
+    return mondayColumnsInConnectListWithHeader.reduce((total, el) => {
+        return total &= el !== false ? true : false
+    }, true)
+}
+
 
 export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
     if ( header === null){
@@ -70,11 +75,13 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
     }else{
         const mondayColumnsInConnectList = mondayColumns.filter(col => findColumnInConnectList(col))
         const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0]))
+        if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
+            setHaveConf(false)
+            return mondayColumnsInConnectList
+        }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
-        console.log(configuration)
         setHaveConf(true)
         return configuration
-        
     }
 }
 
