@@ -46,6 +46,7 @@ class App extends Component {
   };
 
   getRows = (rows) => {
+    console.log(rows)
     this.setState({localItemList: rows})
   }
 
