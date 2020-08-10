@@ -3,7 +3,8 @@ import mondaySdk from "monday-sdk-js";
 import './App.css';
 import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
-import { makeConfiguration } from './modules/makeConfiguration'
+import { makeConfiguration } from './modules/makeConfiguration';
+import Update from './modules/update/Update';
 
 const monday = mondaySdk();
 
@@ -13,12 +14,14 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
+      headerIndex: 0,
+      boardIds: '',
       settings: {},
       context: {},
       boards: [],
       mondayColumns: [],
       configuration: [],
-      rows: null,
+      localItemList: null,
     }
   }
 
@@ -32,6 +35,7 @@ class App extends Component {
     this.setState({ context });
 
     const boardIds = context.boardIds || [context.boardId];
+    this.setState({boardIds:boardIds})
     monday
       .api(`query { boards(ids:[${boardIds}]) { columns { title, type, settings_str, id } }}`)
       .then((res) => {
@@ -42,35 +46,51 @@ class App extends Component {
   };
 
   getRows = (rows) => {
-    this.setState({rows})
+    console.log(rows)
+    this.setState({localItemList: rows})
   }
 
   setHaveConf = (val) => {
     this.setState({haveConf:val})
   }
 
-  setConfiguration = (rows, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(rows, mondayColumns, setHaveConf)})
+  setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)})
   }
 
   render() {
-    const { rows, mondayColumns, haveConf } = this.state;
+    const { localItemList, mondayColumns, haveConf, configuration, boardIds, headerIndex } = this.state;
     
     return (
       <div>
         <div>
           <Jumbotron className="jumbotron-background">          
-              <h1 className="display-3">react-excel-renderer</h1>
-              <p className="lead">Welcome to the demo of react-excel-renderer.</p>                        
+              <h1 className="display-3">Update Monday Board</h1>
+              {
+                haveConf ? 
+                <p className="lead">Click Update Button</p>
+                :  
+                <p className="lead">Upload Excel file or CSV file</p>
+              }                 
               <hr className="my-2" />
           </Jumbotron>
         </div>
-        <ExcelTaker
-          getRows={this.getRows}
-          setConfiguration={this.setConfiguration} 
-          mondayColumns={mondayColumns}
-          setHaveConf={this.setHaveConf}
+        {
+          haveConf ? 
+          <Update 
+            configuration={configuration}
+            boardIds={boardIds}
+            localItemList={localItemList}
+            headerIndex={headerIndex}
           />
+          :  
+          <ExcelTaker
+            getRows={this.getRows}
+            setConfiguration={this.setConfiguration} 
+            mondayColumns={mondayColumns}
+            setHaveConf={this.setHaveConf}
+          />
+        }        
       </div>
     );
   }
@@ -84,7 +104,3 @@ class App extends Component {
 */
 
 export default App;
-
-/*
-`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}` take all board items with data
-*/

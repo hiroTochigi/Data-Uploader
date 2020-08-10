@@ -67,6 +67,11 @@ const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
     }, true)
 }
 
+const addJsonIndex = (mondayColumnsInConnectList) => {
+    mondayColumnsInConnectList.forEach((data, index)=>  index === 0 ? data['json_index'] = null : data['json_index'] = index-1)
+    return mondayColumnsInConnectList
+}
+
 
 export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
     if ( header === null){
@@ -74,7 +79,8 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
         setHaveConf(false)
     }else{
         const mondayColumnsInConnectList = mondayColumns.filter(col => findColumnInConnectList(col))
-        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0]))
+        const mondayColumnsInConnectListWithJsonIndex = addJsonIndex(mondayColumnsInConnectList)
+        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectListWithJsonIndex.map(data => addHeaderData(data, header[0]))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
             return mondayColumnsInConnectList
