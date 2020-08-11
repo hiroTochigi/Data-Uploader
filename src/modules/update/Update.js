@@ -8,8 +8,14 @@ const getBaordIdList = (boardData) => {
     return Object.keys(boardData)
 }
 
+const getItemId = (localData, itemIds, configuration) => {
+
+}
+
 const processItem = (localItem, itemIds, configuration) => {
-    console.log(getLocalDataWithConfiguration(localItem, configuration))
+    const localData = getLocalDataWithConfiguration(localItem, configuration)
+    const id = getItemId(localData, itemIds, configuration)
+
     return 111111
 }
 
@@ -17,7 +23,7 @@ const Update = (props) => {
     const {boardIds, configuration, localItemList, headerIndex} = props;
 
     const updateMain = (e) => {
-        getBoardData(boardIds).then(boardData =>  getBaordIdList(boardData))
+        getBoardData(boardIds, configuration).then(boardData =>  getBaordIdList(boardData))
         .then(itemIds => {
             for (let i=0; i<localItemList.length; i++){
                 if (i <= headerIndex)

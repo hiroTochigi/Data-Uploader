@@ -21,6 +21,7 @@ class App extends Component {
       boards: [],
       mondayColumns: [],
       configuration: [],
+      mondayJsonIndex: {},
       localItemList: null,
     }
   }
@@ -54,8 +55,20 @@ class App extends Component {
     this.setState({haveConf:val})
   }
 
+  makeMondayJsonIndex = (configuration) => {
+    return configuration.reduce((mondayJsonIndex, data) => {
+      mondayJsonIndex[data['title']] = {'json_index':data['json_index'], 'type':data['type']}
+      return mondayJsonIndex
+    }, {})
+  }
+
+  setMondayJsonIndex = (configuration) => {
+    console.log(this.makeMondayJsonIndex(configuration))
+    this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
+  }
+
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)})
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => this.setMondayJsonIndex(this.state.configuration))
   }
 
   render() {
@@ -86,7 +99,7 @@ class App extends Component {
           :  
           <ExcelTaker
             getRows={this.getRows}
-            setConfiguration={this.setConfiguration} 
+            setConfiguration={this.setConfiguration}
             mondayColumns={mondayColumns}
             setHaveConf={this.setHaveConf}
           />

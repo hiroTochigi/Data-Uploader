@@ -2,7 +2,7 @@ import mondaySdk from "monday-sdk-js";
 
 const monday = mondaySdk();
 
-export const getBoardData = (boardIds) => {
+export const getBoardData = (boardIds, configuration) => {
     return new Promise((resolve, reject) => {
         monday
         .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
@@ -10,11 +10,17 @@ export const getBoardData = (boardIds) => {
           const boardAllItems = res.data.boards[0].items;
           let boardDic =  boardAllItems.reduce((mondayData, item) => {
               mondayData[item['id']] = item;
+              mondayData[item['id']]['ids'] =  makeMondayIds(item, configuration)
               return mondayData
           }, {})
+
           resolve(boardDic)
         })
   }) 
+}
+
+const makeMondayIds = (item, configuration) => {
+  return null
 }
 
 
