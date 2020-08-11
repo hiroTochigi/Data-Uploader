@@ -32,7 +32,6 @@ class App extends Component {
 
   getContext = (res) => {
     const context = res.data;
-    console.log("context!", context);
     this.setState({ context });
 
     const boardIds = context.boardIds || [context.boardId];
@@ -63,16 +62,16 @@ class App extends Component {
   }
 
   setMondayJsonIndex = (configuration) => {
-    console.log(this.makeMondayJsonIndex(configuration))
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => this.setMondayJsonIndex(this.state.configuration))
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => 
+    this.setMondayJsonIndex(this.state.configuration))
   }
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, boardIds, headerIndex } = this.state;
+    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     
     return (
       <div>
@@ -92,6 +91,7 @@ class App extends Component {
           haveConf ? 
           <Update 
             configuration={configuration}
+            mondayJsonIndex={mondayJsonIndex}
             boardIds={boardIds}
             localItemList={localItemList}
             headerIndex={headerIndex}

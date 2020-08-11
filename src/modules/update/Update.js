@@ -5,6 +5,7 @@ import { getLocalDataWithConfiguration } from './getLocalData'
 import mondaySdk from "monday-sdk-js";
 
 const getBaordIdList = (boardData) => {
+    console.log(boardData)
     return Object.keys(boardData)
 }
 
@@ -20,10 +21,10 @@ const processItem = (localItem, itemIds, configuration) => {
 }
 
 const Update = (props) => {
-    const {boardIds, configuration, localItemList, headerIndex} = props;
+    const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex} = props;
 
     const updateMain = (e) => {
-        getBoardData(boardIds, configuration).then(boardData =>  getBaordIdList(boardData))
+        getBoardData(boardIds, mondayJsonIndex).then(boardData =>  getBaordIdList(boardData))
         .then(itemIds => {
             for (let i=0; i<localItemList.length; i++){
                 if (i <= headerIndex)
