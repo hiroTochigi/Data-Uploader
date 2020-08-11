@@ -21,6 +21,7 @@ class App extends Component {
       boards: [],
       mondayColumns: [],
       configuration: [],
+      mondayJsonIndex: {},
       localItemList: null,
     }
   }
@@ -31,7 +32,6 @@ class App extends Component {
 
   getContext = (res) => {
     const context = res.data;
-    console.log("context!", context);
     this.setState({ context });
 
     const boardIds = context.boardIds || [context.boardId];
@@ -54,12 +54,24 @@ class App extends Component {
     this.setState({haveConf:val})
   }
 
+  makeMondayJsonIndex = (configuration) => {
+    return configuration.reduce((mondayJsonIndex, data) => {
+      mondayJsonIndex[data['title']] = {'json_index':data['json_index'], 'type':data['type']}
+      return mondayJsonIndex
+    }, {})
+  }
+
+  setMondayJsonIndex = (configuration) => {
+    this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
+  }
+
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)})
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => 
+    this.setMondayJsonIndex(this.state.configuration))
   }
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, boardIds, headerIndex } = this.state;
+    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     
     return (
       <div>
@@ -79,6 +91,7 @@ class App extends Component {
           haveConf ? 
           <Update 
             configuration={configuration}
+            mondayJsonIndex={mondayJsonIndex}
             boardIds={boardIds}
             localItemList={localItemList}
             headerIndex={headerIndex}
@@ -86,7 +99,7 @@ class App extends Component {
           :  
           <ExcelTaker
             getRows={this.getRows}
-            setConfiguration={this.setConfiguration} 
+            setConfiguration={this.setConfiguration}
             mondayColumns={mondayColumns}
             setHaveConf={this.setHaveConf}
           />

@@ -78,9 +78,9 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
         console.log("Upload Excel File")
         setHaveConf(false)
     }else{
-        const mondayColumnsInConnectList = mondayColumns.filter(col => findColumnInConnectList(col))
-        const mondayColumnsInConnectListWithJsonIndex = addJsonIndex(mondayColumnsInConnectList)
-        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectListWithJsonIndex.map(data => addHeaderData(data, header[0]))
+        const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
+        const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col))
+        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0]))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
             return mondayColumnsInConnectList
