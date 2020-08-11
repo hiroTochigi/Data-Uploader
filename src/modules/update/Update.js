@@ -9,7 +9,7 @@ const getBaordIdList = (boardData) => {
 }
 
 const processItem = (localItem, itemIds, configuration) => {
-    getLocalDataWithConfiguration(localItem, configuration)
+    console.log(getLocalDataWithConfiguration(localItem, configuration))
     return 111111
 }
 
