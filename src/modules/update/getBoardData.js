@@ -29,20 +29,19 @@ const getJsonData = (item, title, mondayJsonIndex) => {
 }
 
 export const getBoardData = (boardIds, mondayJsonIndex) => {
-    return new Promise((resolve, reject) => {
-        monday
-        .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
-        .then((res) => {
-          const boardAllItems = res.data.boards[0].items;
-          let boardDic =  boardAllItems.reduce((mondayData, item) => {
-              mondayData[item['id']] = item;
-              mondayData[item['id']]['ids'] =  makeMondayIds(item, 'Name', mondayJsonIndex)
-              mondayData[item['id']]['data'] = collectMondayData(item, mondayJsonIndex)
-              return mondayData
-          }, {})
-
-          resolve(boardDic)
-        })
+  return new Promise((resolve, reject) => {
+    monday
+    .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
+    .then((res) => {
+      const boardAllItems = res.data.boards[0].items;
+      let boardDic =  boardAllItems.reduce((mondayData, item) => {
+        mondayData[item['id']] = item;
+        mondayData[item['id']]['ids'] =  makeMondayIds(item, 'Name', mondayJsonIndex)
+        mondayData[item['id']]['data'] = collectMondayData(item, mondayJsonIndex)
+        return mondayData
+      }, {})
+        resolve(boardDic)
+    })
   }) 
 }
 

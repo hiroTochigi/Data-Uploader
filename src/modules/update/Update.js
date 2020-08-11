@@ -5,32 +5,54 @@ import { getLocalDataWithConfiguration } from './getLocalData'
 import mondaySdk from "monday-sdk-js";
 
 const getBaordIdList = (boardData) => {
-    console.log(boardData)
     return Object.keys(boardData)
 }
 
-const getItemId = (localData, itemIds, configuration) => {
-
+const getDataFromCsvTitle = (data, title) => {
+    for (let datum of data){
+        if(datum['csv_title'] === title){
+            return datum['data']
+        }
+    }
+    return null
 }
 
-const processItem = (localItem, itemIds, configuration) => {
-    const localData = getLocalDataWithConfiguration(localItem, configuration)
-    const id = getItemId(localData, itemIds, configuration)
+const isItemOnMonday = (csvItemIds, id, boardData) => {
+    return csvItemIds['id'] === boardData[id]['ids']['id']
+}
 
-    return 111111
+const getItemId = (localData, itemIds, configuration, boardData) => {
+    const csvItemIds = {'id': getDataFromCsvTitle(localData, 'WO NUM')}
+
+    for (const id of itemIds){
+        if(isItemOnMonday(csvItemIds, id, boardData)){
+            return id
+        }
+    }
+    return null
+}
+
+const processItem = (localItem, itemIds, configuration, boardData) => {
+    const localData = getLocalDataWithConfiguration(localItem, configuration)
+    const id = getItemId(localData, itemIds, configuration, boardData)
+    console.log(id)
+
+    return id
 }
 
 const Update = (props) => {
     const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex} = props;
 
     const updateMain = (e) => {
-        getBoardData(boardIds, mondayJsonIndex).then(boardData =>  getBaordIdList(boardData))
-        .then(itemIds => {
+        getBoardData(boardIds, mondayJsonIndex).then(boardData =>  
+            {
+            const itemIds =  getBaordIdList(boardData)
             for (let i=0; i<localItemList.length; i++){
                 if (i <= headerIndex)
                     continue
                 else{
-                    const sharedId = processItem(localItemList[i], itemIds, configuration)
+                    const sharedId = processItem(localItemList[i], itemIds, configuration, boardData)
+                    console.log(sharedId)
                 }
             }
             console.log(itemIds)
