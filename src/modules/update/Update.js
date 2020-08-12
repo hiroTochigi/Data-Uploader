@@ -35,7 +35,9 @@ const getItemId = (localData, itemIds, configuration, boardData) => {
 const processItem = (localItem, itemIds, configuration, boardData) => {
     const localData = getLocalDataWithConfiguration(localItem, configuration)
     const id = getItemId(localData, itemIds, configuration, boardData)
-    console.log(id)
+    if (id === null && getDataFromCsvTitle(localData, "Status") !== '19'){
+        console.log(id)
+    } 
 
     return id
 }
@@ -52,10 +54,8 @@ const Update = (props) => {
                     continue
                 else{
                     const sharedId = processItem(localItemList[i], itemIds, configuration, boardData)
-                    console.log(sharedId)
                 }
             }
-            console.log(itemIds)
         })
 
       }  
