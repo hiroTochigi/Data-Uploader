@@ -3,6 +3,37 @@ import { Button } from 'reactstrap'
 import { getBoardData } from './getBoardData' 
 import { getLocalDataWithConfiguration } from './getLocalData'
 import mondaySdk from "monday-sdk-js";
+import { extendWith } from 'lodash';
+
+/*
+Translate label to index with error handling
+Error handling for columns configuration
+Two type of error
+1. No column title
+2. No label in the column
+Write warning on the log (future implementation)
+Either error return null
+*/
+const getLabelsIndex = (configuration, columnTitle, labelData) => {
+    let targetConfLabels = null
+    for (const conf of configuration){
+        if (conf['title'] === columnTitle){
+            targetConfLabels = conf['labels']
+            break
+        }
+    }
+
+    if (!targetConfLabels) {
+        console.log(`There is no ${columnTitle} column on Monday`)
+        return null
+    }
+
+    return targetConfLabels[labelData] !== undefined ? targetConfLabels[labelData] : 
+    function(){
+        console.log(`There is no ${labelData} labels on ${columnTitle} column`)
+        return null
+    }() 
+}
 
 const getBaordIdList = (boardData) => {
     return Object.keys(boardData)
@@ -35,7 +66,7 @@ const getItemId = (localData, itemIds, configuration, boardData) => {
 const processItem = (localItem, itemIds, configuration, boardData) => {
     const localData = getLocalDataWithConfiguration(localItem, configuration)
     const id = getItemId(localData, itemIds, configuration, boardData)
-    if (id === null && getDataFromCsvTitle(localData, "Status") !== '19'){
+    if (id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsIndex(configuration, "Status", "DONE")){
         console.log(id)
     } 
 

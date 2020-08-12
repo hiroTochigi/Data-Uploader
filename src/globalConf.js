@@ -21,6 +21,7 @@ export const CONNECT_LIST = {
     "ASSEMBLY":"ASSEMBLY",
     "QC/TESTING":"QC/TESTING",
     "Close Safely?":"Close Safely?",
+    "Close Warning/Caution Reason":"Unsafe Closed Causes",
     "BOM Date":"BOM Updated Date",
     "Revised Part List Date":"Revised Part List Date",
     "isBOMChanged":"BOM Changed?"
