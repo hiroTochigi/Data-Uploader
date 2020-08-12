@@ -6,6 +6,7 @@ import mondaySdk from "monday-sdk-js";
 import { extendWith } from 'lodash';
 
 /*
+Translate label to index with error handling
 Error handling for columns configuration
 Two type of error
 1. No column title
