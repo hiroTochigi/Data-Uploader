@@ -5,6 +5,7 @@ import { getLocalDataWithConfiguration } from './getLocalData'
 import { makeItemCreationQuery } from './query'
 import mondaySdk from "monday-sdk-js";
 import { extendWith } from 'lodash';
+import _ from "lodash"
 
 const monday = mondaySdk()
 
@@ -17,7 +18,7 @@ Two type of error
 Write warning on the log (future implementation)
 Either error return null
 */
-const getLabelsIndex = (configuration, columnTitle, labelData) => {
+const getLabelsOfIndex = (configuration, columnTitle, labelData) => {
   let targetConfLabels = null
   for (const conf of configuration){
     if (conf['title'] === columnTitle){
@@ -45,7 +46,7 @@ const getBaordIdList = (boardData) => {
 const getDataFromCsvTitle = (data, title) => {
   for (let datum of data){
     if(datum['csv_title'] === title){
-      return datum['data']
+        return datum['data']
       }
   }
   return null
@@ -66,18 +67,33 @@ const getItemId = (localData, itemIds, configuration, boardData) => {
   return null
 }
 
+const shouldUpdate = (datum, id, boardData) => {
+  return boardData[id]['data'][datum['csv_title']] !== datum['data']
+}
+
+const updateDataSet = (data, id, boardData) => {
+  return data.reduce((updateDataSet, datum) => {
+    if(shouldUpdate(datum, id, boardData)){
+      updateDataSet.push(datum)
+      return updateDataSet
+    }
+    return updateDataSet
+  }, [])
+}
+
 const processItem = (localItem, itemIds, configuration, boardData, boardIds) => {
   const localData = getLocalDataWithConfiguration(localItem, configuration)
   const id = getItemId(localData, itemIds, configuration, boardData)
-  //console.log(makeItemCreationQuery(localData, boardIds))
-  if (id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsIndex(configuration, "Status", "DONE")){
+
+  if(id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsOfIndex(configuration, "Status", "DONE")){
     const query = makeItemCreationQuery(localData, boardIds)
-    console.log(query)
-    monday
-      .api(query)
+    monday.api(query)
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err))
-  } 
+  }else if(id !== null){
+    const updateDataList = updateDataSet(localData, id, boardData)
+    console.log(updateDataList)
+  }
   return id
 }
 
@@ -87,14 +103,18 @@ const Update = (props) => {
   const updateMain = (e) => {
     getBoardData(boardIds, mondayJsonIndex).then(boardData =>  
       {
-        const itemIds =  getBaordIdList(boardData)
+        let itemIds =  getBaordIdList(boardData)
         for (let i=0; i<localItemList.length; i++){
           if (i <= headerIndex)
             continue
           else{
             const sharedId = processItem(localItemList[i], itemIds, configuration, boardData, boardIds)
+            if(sharedId){
+                itemIds.splice(itemIds.indexOf(sharedId), 1)
+            }
         }
       }
+      console.log(itemIds)
     })
   }  
 
