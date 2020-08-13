@@ -24,7 +24,7 @@ const transformData = (data, confData) => {
 }
 
 const changeStatusFormat = (labels, data) => {
-  return labels[data] !== undefined ? labels[data] : null; 
+  return labels[data] !== undefined ? labels[data] : labels[""]; 
 }
 
 const makeTwoDigitDateElement = (date) => {
@@ -37,12 +37,12 @@ Monday only takes YYYY-MM-DD date format
 */
 const ExcelDateToJSDate = (date) => {
   if (date === undefined || date === 'Cabcekked' || date === ''){
-    return null
+    return ""
   }
   const tempDate = new Date((date - 25568)*86400*1000);
   const year = tempDate.getFullYear()
   const month = makeTwoDigitDateElement(tempDate.getMonth() + 1 )
-  const newDate = makeTwoDigitDateElement(tempDate.getMonth())
+  const newDate = makeTwoDigitDateElement(tempDate.getDate())
   return `${year}-${month}-${newDate}`
 }
 
@@ -53,7 +53,7 @@ Therefore, need escape.
 const parsableDoubleQuote = (data) => {
   const dqRegex = /"/g;
   data = typeof(data) === "number" ? data.toString() : data
-  return data.replace(dqRegex, '\\"')
+  return data.replace(dqRegex, '\\\\"')
 }
 
 const numberToString = (data) => {

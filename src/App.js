@@ -72,7 +72,7 @@ class App extends Component {
 
   render() {
     const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
-    
+    console.log(boardIds)
     return (
       <div>
         <div>

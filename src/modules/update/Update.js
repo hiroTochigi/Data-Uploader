@@ -6,6 +6,8 @@ import { makeItemCreationQuery } from './query'
 import mondaySdk from "monday-sdk-js";
 import { extendWith } from 'lodash';
 
+const monday = mondaySdk()
+
 /*
 Translate label to index with error handling
 Error handling for columns configuration
@@ -64,19 +66,24 @@ const getItemId = (localData, itemIds, configuration, boardData) => {
   return null
 }
 
-const processItem = (localItem, itemIds, configuration, boardData) => {
+const processItem = (localItem, itemIds, configuration, boardData, boardIds) => {
   const localData = getLocalDataWithConfiguration(localItem, configuration)
   const id = getItemId(localData, itemIds, configuration, boardData)
-  makeItemCreationQuery(localData)
+  //console.log(makeItemCreationQuery(localData, boardIds))
   if (id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsIndex(configuration, "Status", "DONE")){
-    const query = makeItemCreationQuery(localData)
+    const query = makeItemCreationQuery(localData, boardIds)
+    console.log(query)
+    monday
+      .api(query)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err))
   } 
   return id
 }
 
 const Update = (props) => {
   const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex} = props;
-
+ 
   const updateMain = (e) => {
     getBoardData(boardIds, mondayJsonIndex).then(boardData =>  
       {
@@ -85,7 +92,7 @@ const Update = (props) => {
           if (i <= headerIndex)
             continue
           else{
-            const sharedId = processItem(localItemList[i], itemIds, configuration, boardData)
+            const sharedId = processItem(localItemList[i], itemIds, configuration, boardData, boardIds)
         }
       }
     })
