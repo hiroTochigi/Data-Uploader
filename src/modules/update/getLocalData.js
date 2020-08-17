@@ -49,11 +49,15 @@ const ExcelDateToJSDate = (date) => {
 /*
 Monday Server cannot take double quote.
 Therefore, need escape.
+4 Slashes are needed because data should be parsed two times.
+1. Go through Monday Server
+2. Evaluate as string
 */
 const parsableDoubleQuote = (data) => {
   const dqRegex = /"/g;
   data = typeof(data) === "number" ? data.toString() : data
-  return data.replace(dqRegex, '\\\\"')
+  //return data.replace(dqRegex, '\\\\"')
+    return data.replace(dqRegex, ' inch')
 }
 
 const numberToString = (data) => {
