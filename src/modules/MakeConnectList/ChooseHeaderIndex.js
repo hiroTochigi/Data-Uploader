@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import "./ChooseHeaderIndex.css"
 import { Button } from 'reactstrap';
 
-
-
 class ChooseHeaderIndex extends Component {
     constructor(props){
         super(props);
@@ -51,12 +49,12 @@ class ChooseHeaderIndex extends Component {
                     <h2>Choose Header</h2>
                     <p>Click an appropriate row number as header.</p>
                     <p>Then, click button.</p>
-            {
-                choosenRowName === '' ?
-                <Button color="success" className="button" disabled>Click Row</Button>
-                :
-                <Button color="success" className="button" onClick={() => {this.getHeaderIndex(choosenRowIndex)}}>{choosenRowName}</Button>
-            }   
+
+                    {choosenRowName === '' ?
+                    <Button color="success" className="button" disabled>Click Row</Button>
+                    :
+                    <Button color="success" className="button" onClick={() => {this.getHeaderIndex(choosenRowIndex)}}>{choosenRowName}</Button>}
+
                     <div className="table-container">
                         <table>
                             {rows}
