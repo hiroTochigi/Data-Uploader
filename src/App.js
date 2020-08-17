@@ -17,7 +17,7 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
-      headerIndex: 0,
+      headerIndex: null,
       boardIds: '',
       settings: {},
       context: {},
@@ -31,6 +31,10 @@ class App extends Component {
 
   componentDidMount() {
     monday.listen("context", this.getContext);
+  }
+  
+  getHeaderIndex = (index) => {
+    this.setState({headerIndex:index})
   }
 
   getContext = (res) => {
@@ -109,6 +113,8 @@ class App extends Component {
               <MakeConnectList 
                 localItemList={localItemList}
                 mondayColumns={mondayColumns}
+                headerIndex={headerIndex}
+                getHeaderIndex={this.getHeaderIndex}
               />
         }             
         </div>

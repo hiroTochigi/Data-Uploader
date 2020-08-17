@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Jumbotron } from 'reactstrap';
 import ConfButton from "./ConfButton"
 import ConfButtonContainers from "./ConfButtonContainers"
+import ChooseHeaderIndex from "./ChooseHeaderIndex"
 
 class MakeConnectList extends Component {
   constructor(props){
@@ -11,10 +12,15 @@ class MakeConnectList extends Component {
   }
 
 render() {
-const  {mondayColumns,localItemList} = this.props
-console.log(mondayColumns)
-console.log(localItemList)
+const  {mondayColumns, localItemList, headerIndex, getHeaderIndex} = this.props
   return (
+    headerIndex === null ?
+    <ChooseHeaderIndex 
+      localItemList={localItemList}
+      getHeaderIndex={getHeaderIndex}
+    />
+
+    :
     <ConfButtonContainers 
       localItemList={localItemList}
       mondayColumns={mondayColumns}
