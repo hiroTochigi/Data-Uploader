@@ -1,0 +1,20 @@
+.button {
+  background: #B22222; 
+  border-radius: 6px;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  color: #F0F8FF;
+  max-width: 150px;
+  text-decoration: none;
+}
+
+/* Disable color: #FFB6C1 */
+
+.button .text {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #7FFFD4; 
+  margin: 0 0 15px;
+  font-size: 16px;
+}

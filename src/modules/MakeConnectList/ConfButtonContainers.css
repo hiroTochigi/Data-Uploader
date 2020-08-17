@@ -1,0 +1,13 @@
+.wrap-container{
+    display: flex;
+    align-items: stretch;
+    justify-content:space-around;  
+}
+
+.sm-container{
+    flex-grow: 1;
+}
+
+.big-container{
+    flex-grow: 2;
+}

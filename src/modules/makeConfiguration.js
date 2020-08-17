@@ -82,7 +82,7 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
         const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0]))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
-            return mondayColumnsInConnectList
+            return [] 
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
         setHaveConf(true)

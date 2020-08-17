@@ -5,6 +5,9 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
+import MakeConnectList from './modules/MakeConnectList/MakeConnectList';
+import Banner from "./Banner"
+
 
 const monday = mondaySdk();
 
@@ -67,26 +70,24 @@ class App extends Component {
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
     this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => 
-    this.setMondayJsonIndex(this.state.configuration))
-  }
+      {
+        if(this.haveConf){
+          this.setMondayJsonIndex(this.state.configuration)
+        }else{
+          this.setState({haveConnectList:false})
+        }
+      }
+   )}
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
+    const { localItemList, mondayColumns,haveConnectList, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     console.log(boardIds)
     return (
       <div>
-        <div>
-          <Jumbotron className="jumbotron-background">          
-              <h1 className="display-3">Update Monday Board</h1>
-              {
-                haveConf ? 
-                <p className="lead">Click Update Button</p>
-                :  
-                <p className="lead">Upload Excel file or CSV file</p>
-              }                 
-              <hr className="my-2" />
-          </Jumbotron>
-        </div>
+      <Banner 
+        haveConnectList={haveConnectList} 
+        haveConf={haveConf}
+      /> 
         {
           haveConf ? 
           <Update 
@@ -96,15 +97,21 @@ class App extends Component {
             localItemList={localItemList}
             headerIndex={headerIndex}
           />
-          :  
-          <ExcelTaker
-            getRows={this.getRows}
-            setConfiguration={this.setConfiguration}
-            mondayColumns={mondayColumns}
-            setHaveConf={this.setHaveConf}
-          />
-        }        
-      </div>
+          :
+            haveConnectList ?   
+              <ExcelTaker
+                getRows={this.getRows}
+                setConfiguration={this.setConfiguration}
+                mondayColumns={mondayColumns}
+                setHaveConf={this.setHaveConf}
+              /> 
+              :
+              <MakeConnectList 
+                localItemList={localItemList}
+                mondayColumns={mondayColumns}
+              />
+        }             
+        </div>
     );
   }
 }
