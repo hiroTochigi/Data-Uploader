@@ -94,14 +94,10 @@ const processItem = (localItem, itemIds, configuration, boardData, boardIds) => 
   if(id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsOfIndex(configuration, "Status", "DONE")){
     const query = makeItemCreationQuery(localData, boardIds)
     processQuery(query)
-    //monday.api(query)
-    //  .then((res) => console.log(res.data))
-    //  .catch((err) => console.log(err))
   }else if(id !== null){
     const updateDataList = updateDataSet(localData, id, boardData)
     if(updateDataList.length > 0){
       const query = makeUpdateQuery(updateDataList, id, boardIds)
-      console.log(query)
       processQuery(query)
     }
   }
