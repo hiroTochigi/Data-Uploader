@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'reactstrap'
 import { getBoardData } from './getBoardData' 
 import { getLocalDataWithConfiguration } from './getLocalData'
-import { makeItemCreationQuery } from './query'
+import { makeItemCreationQuery, makeUpdateQuery } from './query'
 import mondaySdk from "monday-sdk-js";
 import { extendWith } from 'lodash';
 import _ from "lodash"
@@ -81,18 +81,29 @@ const updateDataSet = (data, id, boardData) => {
   }, [])
 }
 
+const processQuery = (query) => {
+   monday.api(query)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err))
+}
+
 const processItem = (localItem, itemIds, configuration, boardData, boardIds) => {
   const localData = getLocalDataWithConfiguration(localItem, configuration)
   const id = getItemId(localData, itemIds, configuration, boardData)
 
   if(id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsOfIndex(configuration, "Status", "DONE")){
     const query = makeItemCreationQuery(localData, boardIds)
-    monday.api(query)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err))
+    processQuery(query)
+    //monday.api(query)
+    //  .then((res) => console.log(res.data))
+    //  .catch((err) => console.log(err))
   }else if(id !== null){
     const updateDataList = updateDataSet(localData, id, boardData)
-    console.log(updateDataList)
+    if(updateDataList.length > 0){
+      const query = makeUpdateQuery(updateDataList, id, boardIds)
+      console.log(query)
+      processQuery(query)
+    }
   }
   return id
 }

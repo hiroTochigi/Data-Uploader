@@ -56,7 +56,8 @@ Therefore, need escape.
 const parsableDoubleQuote = (data) => {
   const dqRegex = /"/g;
   data = typeof(data) === "number" ? data.toString() : data
-  return data.replace(dqRegex, '\\\\"')
+  //return data.replace(dqRegex, '\\\\"')
+    return data.replace(dqRegex, ' inch')
 }
 
 const numberToString = (data) => {

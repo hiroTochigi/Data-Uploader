@@ -13,7 +13,7 @@ const getJsonData = (item, title, mondayJsonIndex) => {
   const dataType = mondayJsonIndex[title]['type']
 
   if (value === null || value === undefined || value === '' ){
-    return null
+    return ""
   }else if(dataType === 'color'){
     let newValue = JSON.parse(value)
     return newValue['index'].toString()
