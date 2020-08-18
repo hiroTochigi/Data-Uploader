@@ -5,7 +5,19 @@ import { CONNECT_LIST } from './../../globalConf'
 import { Button, ButtonGroup } from 'reactstrap';
 
 const ConfButtonContainers = (props) => {
-const  {mondayColumns, localItemList, headerIndex} = props
+
+    const {  
+        localItemList,
+        mondayColumns,
+        headerIndex,
+        isEditMode,
+        isDeleteMode,
+        isOpenTrashCan,
+        confedHeaders,
+        preConfHeader,
+        trashCan,
+    } = props
+
 //console.log(localItemList)
 const mondayColumnButtons = mondayColumns.map(el => 
                             <ConfButtonOne 
@@ -27,17 +39,26 @@ const configuredConfButton = Object.keys(CONNECT_LIST).reduce((buttons, el) => {
     return buttons
 }, [])
 
+    console.log(isEditMode)
 return(
     <div className="wrap-container"> 
-        <div className="sm-container">{localItemButtons}</div>
-        <div className="sm-container">{mondayColumnButtons}</div>
-        <div className="big-container">{configuredConfButton} </div>
+        <div className="sm-container">
+            <h3 className="container-text">Excel Header</h3>
+            {localItemButtons}
+        </div>
+        <div className="sm-container">
+            <h3 className="container-text">Monday Header</h3>
+            {mondayColumnButtons}
+        </div>
+        <div className="big-container">
+            <h3 className="container-text">Configuration</h3>
+        </div>
         <div className="tool-box"></div>   
         <div className="tool">
             <ButtonGroup vertical>
-                <Button color="secondary">Edit</Button>
-                <Button color="secondary">Delete</Button>
-                <Button color="secondary">Trash Can</Button>
+                {isEditMode ? <Button color="primary">Edit</Button> : <Button color="secondary">Edit</Button>}
+                {isDeleteMode ? <Button color="primary">Delete</Button> : <Button color="secondary">Delete</Button>}
+                {isOpenTrashCan ? <Button color="primary">Trash Can</Button> : <Button color="secondary">Trash Can</Button>}
             </ButtonGroup>
         </div>
 

@@ -9,7 +9,6 @@ class ChooseHeaderIndex extends Component {
             choosenRowName: '',
             choosenRowIndex: null, 
         }
-
         this.getHeaderIndex = props.getHeaderIndex.bind(this)
         this.rowClickEvent = this.rowClickEvent.bind(this)
     }
