@@ -8,9 +8,19 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    border: 2px solid;
 }
 
 .big-container{
-    flex-grow: 2;
+    flex-grow: 1;
+}
+
+.tool-box{
+    flex-grow: 1;
+}
+
+.tool{
+    position: fixed; 
+    top: 200;
+    right: 0;
+    padding-right: 1%;
 }

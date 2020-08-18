@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Jumbotron } from 'reactstrap';
-import ConfButton from "./ConfButton"
 import ConfButtonContainers from "./ConfButtonContainers"
 import ChooseHeaderIndex from "./ChooseHeaderIndex"
 
@@ -19,11 +17,11 @@ const  {mondayColumns, localItemList, headerIndex, getHeaderIndex} = this.props
       localItemList={localItemList}
       getHeaderIndex={getHeaderIndex}
     />
-
     :
     <ConfButtonContainers 
       localItemList={localItemList}
       mondayColumns={mondayColumns}
+      headerIndex={headerIndex}
     />
 
     )

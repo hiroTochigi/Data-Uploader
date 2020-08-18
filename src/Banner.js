@@ -4,7 +4,7 @@ import { Jumbotron } from 'reactstrap';
 const Banner = (props) => {
     const {haveConnectList, haveConf} = props
     return(
-        <div>
+        <div className='banner-box'>
           <Jumbotron className="jumbotron-background">          
           {
             haveConnectList ?
