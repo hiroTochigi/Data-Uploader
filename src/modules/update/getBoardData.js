@@ -1,6 +1,5 @@
 import mondaySdk from "monday-sdk-js";
 import _ from "lodash"
-import { CONNECT_LIST } from '../../globalConf'
 
 const monday = mondaySdk();
 
@@ -28,7 +27,7 @@ const getJsonData = (item, title, mondayJsonIndex) => {
   }
 }
 
-export const getBoardData = (boardIds, mondayJsonIndex) => {
+export const getBoardData = (boardIds, mondayJsonIndex, connectList) => {
   return new Promise((resolve, reject) => {
     monday
     .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
@@ -37,7 +36,7 @@ export const getBoardData = (boardIds, mondayJsonIndex) => {
       let boardDic =  boardAllItems.reduce((mondayData, item) => {
         mondayData[item['id']] = item;
         mondayData[item['id']]['ids'] =  makeMondayIds(item, 'Name', mondayJsonIndex)
-        mondayData[item['id']]['data'] = collectMondayData(item, mondayJsonIndex)
+        mondayData[item['id']]['data'] = collectMondayData(item, mondayJsonIndex, connectList)
         return mondayData
       }, {})
         resolve(boardDic)
@@ -49,9 +48,9 @@ const makeMondayIds = (item, title, mondayJsonIndex) => {
   return {'id': getJsonData(item, title, mondayJsonIndex)}
 }
 
-const collectMondayData = (item, mondayJsonIndex) => {
-  return Object.keys(CONNECT_LIST).reduce((dataList, title) => {
-    dataList[title] = getJsonData(item, CONNECT_LIST[title], mondayJsonIndex)
+const collectMondayData = (item, mondayJsonIndex, connectList) => {
+  return Object.keys(connectList).reduce((dataList, title) => {
+    dataList[title] = getJsonData(item, connectList[title], mondayJsonIndex)
     return dataList
   }, {})
 }

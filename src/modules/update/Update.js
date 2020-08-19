@@ -105,10 +105,10 @@ const processItem = (localItem, itemIds, configuration, boardData, boardIds) => 
 }
 
 const Update = (props) => {
-  const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex} = props;
+  const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex, connectList} = props;
  
   const updateMain = (e) => {
-    getBoardData(boardIds, mondayJsonIndex).then(boardData =>  
+    getBoardData(boardIds, mondayJsonIndex, connectList).then(boardData =>  
       {
         let itemIds =  getBaordIdList(boardData)
         for (let i=0; i<localItemList.length; i++){

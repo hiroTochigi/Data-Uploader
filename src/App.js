@@ -38,17 +38,28 @@ class App extends Component {
   getContext = (res) => {
     const context = res.data;
     this.setState({ context });
-
     const boardIds = context.boardIds || [context.boardId];
-    this.setState({boardIds:boardIds})
-    monday
-      .api(`query { boards(ids:[${boardIds}]) { columns { title, type, settings_str, id } }}`)
+
+    for(let i=0; boardIds.length > i; i++){
+      monday
+      .api(`query { boards(ids:[${boardIds[i]}]) { name, columns { title, type, settings_str, id } }}`)
       .then((res) => {
-        this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
-          console.log(res.data.boards[0].columns)
-        });
-      });
-  };
+        if (res.data.boards[0].name !== "Configuration"){
+          this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
+            this.setState({boardIds:boardIds[i]})
+            console.log(res.data)
+          });
+        }else{
+          monday
+          .api(`query { boards(ids:[${boardIds[i]}]) { items { name, group{ id }, column_values { id, value } } }}`)
+          .then((res) => {
+            const boardAllItems = res.data.boards[0].items;
+            console.log(boardAllItems)
+          })
+        }
+      }
+    )}
+  }
 
   getRows = (rows) => {
     console.log(rows)
@@ -77,7 +88,7 @@ class App extends Component {
   }
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
+    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex, connectList } = this.state;
     console.log(boardIds)
     return (
       <div>
@@ -101,6 +112,7 @@ class App extends Component {
             boardIds={boardIds}
             localItemList={localItemList}
             headerIndex={headerIndex}
+            connectList={connectList}
           />
           :  
           <ExcelTaker
