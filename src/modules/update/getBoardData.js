@@ -27,7 +27,7 @@ const getJsonData = (item, title, mondayJsonIndex) => {
   }
 }
 
-export const getBoardData = (boardIds, mondayJsonIndex, connectList) => {
+export const getBoardData = (boardIds, mondayJsonIndex, connectList, connectIds) => {
   return new Promise((resolve, reject) => {
     monday
     .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
@@ -35,7 +35,7 @@ export const getBoardData = (boardIds, mondayJsonIndex, connectList) => {
       const boardAllItems = res.data.boards[0].items;
       let boardDic =  boardAllItems.reduce((mondayData, item) => {
         mondayData[item['id']] = item;
-        mondayData[item['id']]['ids'] =  makeMondayIds(item, 'Name', mondayJsonIndex)
+        mondayData[item['id']]['ids'] =  makeMondayIds(item, connectIds, mondayJsonIndex, connectList)
         mondayData[item['id']]['data'] = collectMondayData(item, mondayJsonIndex, connectList)
         return mondayData
       }, {})
@@ -44,8 +44,12 @@ export const getBoardData = (boardIds, mondayJsonIndex, connectList) => {
   }) 
 }
 
-const makeMondayIds = (item, title, mondayJsonIndex) => {
-  return {'id': getJsonData(item, title, mondayJsonIndex)}
+const makeMondayIds = (item, connectIds, mondayJsonIndex, connectList) => {
+  return connectIds.reduce((mondayIds, connectId) => {
+    const mondayTitle = connectList[connectId]
+    mondayIds[connectId] =  getJsonData(item, mondayTitle, mondayJsonIndex)
+    return mondayIds
+  }, {})
 }
 
 const collectMondayData = (item, mondayJsonIndex, connectList) => {

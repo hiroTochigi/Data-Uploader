@@ -52,15 +52,22 @@ const getDataFromCsvTitle = (data, title) => {
   return null
 }
 
-const isItemOnMonday = (csvItemIds, id, boardData) => {
-  return csvItemIds['id'] === boardData[id]['ids']['id']
+const isItemOnMonday = (csvItemIds, id, boardData, connectIds) => {
+  return connectIds.reduce((isAllItemOnMonday, connectId) => {
+    isAllItemOnMonday &= csvItemIds[connectId] === boardData[id]['ids'][connectId]
+    return isAllItemOnMonday
+  }, true)
+  //return csvItemIds['id'] === boardData[id]['ids']['id']
 }
 
-const getItemId = (localData, itemIds, configuration, boardData) => {
-  const csvItemIds = {'id': getDataFromCsvTitle(localData, 'WO NUM')}
+const getItemId = (localData, itemIds, configuration, boardData, connectIds) => {
+  const csvItemIds = connectIds.reduce((ids, el) => {
+    ids[el] = getDataFromCsvTitle(localData, el) 
+    return ids
+  }, {})
 
   for (const id of itemIds){
-    if(isItemOnMonday(csvItemIds, id, boardData)){
+    if(isItemOnMonday(csvItemIds, id, boardData, connectIds)){
       return id
     }
   }
@@ -87,9 +94,17 @@ const processQuery = (query) => {
       .catch((err) => console.log(err))
 }
 
-const processItem = (localItem, itemIds, configuration, boardData, boardIds) => {
+const processItem = ( localItem,
+                      itemIds,
+                      configuration,
+                      boardData,
+                      boardIds,
+                      connectIds,
+                      exclusiveLabels,
+                      criteria,
+                    ) => {
   const localData = getLocalDataWithConfiguration(localItem, configuration)
-  const id = getItemId(localData, itemIds, configuration, boardData)
+  const id = getItemId(localData, itemIds, configuration, boardData, connectIds)
 
   if(id === null && getDataFromCsvTitle(localData, "Status") !== getLabelsOfIndex(configuration, "Status", "DONE")){
     const query = makeItemCreationQuery(localData, boardIds)
@@ -98,24 +113,42 @@ const processItem = (localItem, itemIds, configuration, boardData, boardIds) => 
     const updateDataList = updateDataSet(localData, id, boardData)
     if(updateDataList.length > 0){
       const query = makeUpdateQuery(updateDataList, id, boardIds)
-      processQuery(query)
+      //processQuery(query)
     }
   }
   return id
 }
 
 const Update = (props) => {
-  const {boardIds, configuration, mondayJsonIndex, localItemList, headerIndex, connectList} = props;
- 
+  const { localItemList,
+          configuration,
+          mondayJsonIndex,
+          boardIds,
+          headerIndex,
+          connectList,
+          connectIds,
+          exclusiveLabels,
+          criteria,
+        } = props;
+        
+
   const updateMain = (e) => {
-    getBoardData(boardIds, mondayJsonIndex, connectList).then(boardData =>  
+    getBoardData(boardIds, mondayJsonIndex, connectList, connectIds).then(boardData =>  
       {
         let itemIds =  getBaordIdList(boardData)
         for (let i=0; i<localItemList.length; i++){
           if (i <= headerIndex)
             continue
           else{
-            const sharedId = processItem(localItemList[i], itemIds, configuration, boardData, boardIds)
+            const sharedId = processItem( localItemList[i],
+                                          itemIds,
+                                          configuration,
+                                          boardData,
+                                          boardIds,
+                                          connectIds,
+                                          exclusiveLabels,
+                                          criteria,
+                                        )
             if(sharedId){
                 itemIds.splice(itemIds.indexOf(sharedId), 1)
             }

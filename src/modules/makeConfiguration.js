@@ -8,7 +8,6 @@ const getMondayTitle = (csv_title, connectList) => {
     }
     catch (err){
         if (err instanceof SyntaxError) {
-            console.log( "JSON Error: " + err.message );
         } else {
             throw err; // rethrow (*)
         }

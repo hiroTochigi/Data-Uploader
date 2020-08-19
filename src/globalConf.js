@@ -29,3 +29,16 @@ export const CONNECT_LIST = {
 export const header = {
   'headerIndex': 0,
 }
+
+export const ids = ['WO NUM']
+
+export const exclusiveLabels = {
+  'ALL PARTS ORDERED': ["Kit Incomplete"],
+  'Status': ['On Hold'],
+  'ASSEMBLY': ['On Hold'],
+  'QC/TESTING': ['On Hold'],
+} 
+
+export const criteria = {
+  'Status': ['IN PROCESS']
+}

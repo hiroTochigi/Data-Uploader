@@ -5,7 +5,7 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
-import { CONNECT_LIST, header } from './globalConf'
+import { CONNECT_LIST, header, ids, exclusiveLabels, criteria} from './globalConf'
 
 const monday = mondaySdk();
 
@@ -25,14 +25,20 @@ class App extends Component {
       mondayJsonIndex: {},
       localItemList: null,
       connectList: {},
+      connectIds: [],
+      exclusiveLabels: {},
+      criteria: {},
     }
   }
 
   componentDidMount() {
     monday.listen("context", this.getContext)
-    this.setState({connectList:CONNECT_LIST})
-    this.setState({headerIndex:header.headerIndex})
-
+    this.setState({ connectList:CONNECT_LIST,
+                    headerIndex:header.headerIndex,
+                    connectIds:ids,
+                    exclusiveLabels: exclusiveLabels,
+                    criteria: criteria,
+                  })
   }
 
   getContext = (res) => {
@@ -88,7 +94,18 @@ class App extends Component {
   }
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex, connectList } = this.state;
+    const { localItemList,
+            mondayColumns,
+            haveConf,
+            configuration,
+            mondayJsonIndex,
+            boardIds,
+            headerIndex,
+            connectList,
+            connectIds,
+            exclusiveLabels,
+            criteria,
+    } = this.state;
     console.log(boardIds)
     return (
       <div>
@@ -113,6 +130,9 @@ class App extends Component {
             localItemList={localItemList}
             headerIndex={headerIndex}
             connectList={connectList}
+            connectIds={connectIds}
+            exclusiveLabels={exclusiveLabels}
+            criteria={criteria}
           />
           :  
           <ExcelTaker
