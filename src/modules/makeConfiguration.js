@@ -1,11 +1,11 @@
 import { CONNECT_LIST } from '../globalConf'
 
-const getMondayTitle = (csv_title) => {
+const getMondayTitle = (csv_title, connectList) => {
     try{
-        if (!CONNECT_LIST[csv_title]){
+        if (!connectList[csv_title]){
             throw new SyntaxError(`No ${csv_title} key`)
         }
-        return CONNECT_LIST[csv_title]
+        return connectList[csv_title]
     }
     catch (err){
         if (err instanceof SyntaxError) {
@@ -16,17 +16,17 @@ const getMondayTitle = (csv_title) => {
     }
 }
 
-const findColumnInConnectList = (col) => {
-    for (const data in CONNECT_LIST){
-        if (CONNECT_LIST[data] === col['title'])
+const findColumnInConnectList = (col, connectList) => {
+    for (const data in connectList){
+        if (connectList[data] === col['title'])
             return true
     }
     return false
 }
 
-const addHeaderData = (colData, header) => {
+const addHeaderData = (colData, header, connectList) => {
     for (let i=0; header.length > i ;i++ ){
-        if (colData["title"] === getMondayTitle(header[i])){
+        if (colData["title"] === getMondayTitle(header[i], connectList)){
             colData["csv_position"] = i
             colData["csv_title"] = header[i]
             return colData
@@ -85,14 +85,14 @@ const addJsonIndex = (mondayColumnsInConnectList) => {
     return mondayColumnsInConnectList
 }
 
-export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
+export const makeConfiguration = (header, mondayColumns, setHaveConf, connectList) => {
     if ( header === null){
         console.log("Upload Excel File")
         setHaveConf(false)
     }else{
         const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
-        const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col))
-        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0]))
+        const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
+        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0], connectList))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
             return mondayColumnsInConnectList

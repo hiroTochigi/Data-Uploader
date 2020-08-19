@@ -5,6 +5,7 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
+import { CONNECT_LIST } from './globalConf'
 
 const monday = mondaySdk();
 
@@ -23,11 +24,13 @@ class App extends Component {
       configuration: [],
       mondayJsonIndex: {},
       localItemList: null,
+      connectList: {},
     }
   }
 
   componentDidMount() {
-    monday.listen("context", this.getContext);
+    monday.listen("context", this.getContext)
+    this.setState({connectList:CONNECT_LIST})
   }
 
   getContext = (res) => {
@@ -66,13 +69,16 @@ class App extends Component {
   }
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => 
+   const connectList = this.state.connectList
+    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
   }
 
   render() {
     const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     console.log(boardIds)
+    const connectList = this.state.connectList
+    Object.keys(connectList).map(key => console.log(connectList[key]))
     return (
       <div>
         <div>
