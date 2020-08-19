@@ -1,4 +1,3 @@
-import { CONNECT_LIST } from '../globalConf'
 
 const getMondayTitle = (csv_title, connectList) => {
     try{
@@ -80,9 +79,9 @@ const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
     }, true)
 }
 
-const addJsonIndex = (mondayColumnsInConnectList) => {
-    mondayColumnsInConnectList.forEach((data, index)=>  index === 0 ? data['json_index'] = null : data['json_index'] = index-1)
-    return mondayColumnsInConnectList
+const addJsonIndex = (mondayColumns) => {
+    mondayColumns.forEach((data, index)=>  index === 0 ? data['json_index'] = null : data['json_index'] = index-1)
+    return mondayColumns
 }
 
 export const makeConfiguration = (header, mondayColumns, setHaveConf, connectList) => {
@@ -92,14 +91,13 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf, connectLis
     }else{
         const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
         const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
-        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header[0], connectList))
+        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
             return mondayColumnsInConnectList
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
         setHaveConf(true)
-        console.log(configuration)
         return configuration
     }
 }

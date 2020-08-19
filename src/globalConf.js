@@ -25,3 +25,7 @@ export const CONNECT_LIST = {
   "Revised Part List Date":"Revised Part List Date",
   "isBOMChanged":"BOM Changed?"
 }
+
+export const header = {
+  'headerIndex': 0,
+}

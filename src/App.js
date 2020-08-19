@@ -5,7 +5,7 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
-import { CONNECT_LIST } from './globalConf'
+import { CONNECT_LIST, header } from './globalConf'
 
 const monday = mondaySdk();
 
@@ -15,7 +15,7 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
-      headerIndex: 0,
+      headerIndex: null,
       boardIds: '',
       settings: {},
       context: {},
@@ -31,6 +31,8 @@ class App extends Component {
   componentDidMount() {
     monday.listen("context", this.getContext)
     this.setState({connectList:CONNECT_LIST})
+    this.setState({headerIndex:header.headerIndex})
+
   }
 
   getContext = (res) => {
@@ -69,16 +71,14 @@ class App extends Component {
   }
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-   const connectList = this.state.connectList
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf, connectList)}, () => 
+    const { connectList, headerIndex } = this.state
+    this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
   }
 
   render() {
     const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     console.log(boardIds)
-    const connectList = this.state.connectList
-    Object.keys(connectList).map(key => console.log(connectList[key]))
     return (
       <div>
         <div>
