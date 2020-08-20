@@ -17,8 +17,6 @@ export const makeUpdateQuery = (data, id, board_id) => {
 }
 
 const addColumnValues = (localData, flag) => {
-  //const firstColumnValues = 'column_values:{'
-  //const closeColumnValues = '}'
   console.log(localData)
   const columnValues = localData.reduce((allData, data, index, list) => {
     if(flag === 'c' && data['id'] === 'name')

@@ -100,5 +100,3 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf, connectLis
         return configuration
     }
 }
-
-

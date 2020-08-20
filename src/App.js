@@ -87,10 +87,62 @@ class App extends Component {
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
+  getTargetLabelSet = (labelTitle, configuration) => {
+    for (let i=0; configuration.length>i; i++){
+      if(labelTitle === configuration[i]['title']){
+        console.log(configuration[i])
+        return configuration[i]['labels']
+      }
+    }
+    alert(`No ${labelTitle} in configuration. Something wrong`)
+    return null
+  }
+
+  translateTitleToNumber = (title, labelSet, la) => {
+    const connmaIndex = title.search(',')
+    
+    const labelId = connmaIndex === -1 ? 
+    labelSet[title] 
+    : 
+    (
+      labelSet[title.slice(0, connmaIndex)] === undefined ?
+      undefined
+      :
+      labelSet[title.slice(0, connmaIndex)] + title.slice(connmaIndex) 
+    )
+    
+    if ( labelId === undefined ){
+      alert(`No "${connmaIndex === -1 ? title : title.slice(0, connmaIndex)}" in "${la}" column. Please check your configuration`)
+    } 
+    console.log(labelId)
+    return labelId
+  }
+
+  /*
+  Labels and logic is separated by , (conma) inside string
+  If there is conma in the string, convert the string before the conma to number
+  Then add with the number and the remained portion including conma.
+  */
+  getIndex = (labels, configuration) => {
+    const newLabels = Object.keys(labels).reduce((newLabels, la) => {
+      const targetLabelSet = this.getTargetLabelSet(la, configuration) 
+      newLabels[la] = labels[la].map(title => this.translateTitleToNumber(title, targetLabelSet, la)) 
+      console.log(labels[la])
+      return newLabels
+    }, {}) 
+    console.log(newLabels)
+    console.log(configuration)
+    return newLabels
+  }
+
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    const { connectList, headerIndex } = this.state
+    const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
     this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
+    this.setState({
+      exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
+      criteria:  this.getIndex(criteria, this.state.configuration)
+    })
   }
 
   render() {

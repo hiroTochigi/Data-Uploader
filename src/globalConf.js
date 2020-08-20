@@ -1,5 +1,4 @@
 
-
 export const CONNECT_LIST = {
   "WO NUM":"Name",
   "Reference ":"REFERENCE#",
@@ -33,12 +32,12 @@ export const header = {
 export const ids = ['WO NUM']
 
 export const exclusiveLabels = {
-  'ALL PARTS ORDERED': ["Kit Incomplete"],
-  'Status': ['On Hold'],
+  'ALL PARTS RCVD': ["Kit Incomplete"],
+  'Status': ['ON HOLD'],
   'ASSEMBLY': ['On Hold'],
   'QC/TESTING': ['On Hold'],
 } 
 
 export const criteria = {
-  'Status': ['IN PROCESS']
+  'Status': ['DONE,!=']
 }
