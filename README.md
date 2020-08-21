@@ -5,9 +5,9 @@ This Web App still is in developing phase.
 ## Purpose of this app
 We use an ERP to manage our daily jobs, but the ERP is very poor to present job flows.
 
-Monday can visualize job flows clearely and let users share information easiliy. 
+[Monday.com](https://monday.com/) can visualize job flows clearely and let users share information easiliy. 
 
-In addition, Monday has awesome intergration and automation functions to make daily routine jobs easier and more efficiently.
+In addition, Monday has awesome intergration and automation functions to make daily routine jobs easier and more efficient.
 
 Monday.com allows users to upload Excel file to initiate Board.
 
