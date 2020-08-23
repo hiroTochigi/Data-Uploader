@@ -84,6 +84,7 @@ class App extends Component {
   }
 
   setMondayJsonIndex = (configuration) => {
+    console.log(configuration)
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
@@ -100,7 +101,7 @@ class App extends Component {
 
   translateTitleToNumber = (title, labelSet, la) => {
     const connmaIndex = title.search(',')
-    
+
     const labelId = connmaIndex === -1 ? 
     labelSet[title] 
     : 
@@ -114,7 +115,6 @@ class App extends Component {
     if ( labelId === undefined ){
       alert(`No "${connmaIndex === -1 ? title : title.slice(0, connmaIndex)}" in "${la}" column. Please check your configuration`)
     } 
-    console.log(labelId)
     return labelId
   }
 
@@ -127,12 +127,28 @@ class App extends Component {
     const newLabels = Object.keys(labels).reduce((newLabels, la) => {
       const targetLabelSet = this.getTargetLabelSet(la, configuration) 
       newLabels[la] = labels[la].map(title => this.translateTitleToNumber(title, targetLabelSet, la)) 
-      console.log(labels[la])
       return newLabels
     }, {}) 
-    console.log(newLabels)
-    console.log(configuration)
     return newLabels
+  }
+
+  getCsvTitle = (key, connectList) => {
+    const flippedConnectList = Object.keys(connectList).reduce((flippedList, key) => {
+      flippedList[connectList[key]] = key
+      return flippedList
+    }, {})
+    return flippedConnectList[key]
+  }
+
+  getReadyToUseCriteria = (criteria, configuration, connectList) => {
+    const tempCriteria = this.getIndex(criteria, configuration)
+    return Object.keys(tempCriteria).reduce((newCriteria, key) => {
+      newCriteria[key] = {
+                          criteria:tempCriteria[key],
+                          csv_title:this.getCsvTitle(key, connectList)
+                         }
+    return newCriteria                     
+    }, {})
   }
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
@@ -141,7 +157,7 @@ class App extends Component {
     this.setMondayJsonIndex(this.state.configuration))
     this.setState({
       exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
-      criteria:  this.getIndex(criteria, this.state.configuration)
+      criteria:  this.getReadyToUseCriteria(criteria, this.state.configuration, connectList)
     })
   }
 

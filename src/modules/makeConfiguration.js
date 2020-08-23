@@ -34,15 +34,14 @@ const addHeaderData = (colData, header, connectList) => {
 }
 
 const makeLabels = (obj) => {
-    obj = JSON.parse(obj)
-    obj = obj.labels
-    if (!Array.isArray(obj)){
-        return Object.keys(obj).reduce((ret, key) => {
-            ret[obj[key]] = key;
+    const preLabels = JSON.parse(obj).labels 
+    if (!Array.isArray(preLabels)){
+        return Object.keys(preLabels).reduce((ret, key) => {
+            ret[preLabels[key]] = key;
             return ret;
         }, {});
     }else{
-        return obj.reduce((labels, el) => {
+        return preLabels.reduce((labels, el) => {
             labels[el['name']] = el['id']
             return labels
         } , {})
