@@ -2,10 +2,10 @@ import mondaySdk from "monday-sdk-js";
 
 const monday = mondaySdk();
 
-export const getBoardData = (boardIds, mondayJsonIndex, connectList, connectIds) => {
+export const getBoardData = (boardId, mondayJsonIndex, connectList, connectIds) => {
   return new Promise((resolve, reject) => {
     monday
-    .api(`query { boards(ids:[${boardIds}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
+    .api(`query { boards(ids:[${boardId}]) { items { name, id, group{ id }, column_values { id, value } } }}`)
     .then((res) => {
       const boardAllItems = res.data.boards[0].items;
       const boardDic =  boardAllItems.reduce((mondayData, item) => {

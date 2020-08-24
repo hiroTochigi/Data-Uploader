@@ -16,7 +16,7 @@ class App extends Component {
       haveConnectList: true,
       haveConf: false,
       headerIndex: null,
-      boardIds: '',
+      boardId: '',
       settings: {},
       context: {},
       boards: [],
@@ -52,7 +52,7 @@ class App extends Component {
       .then((res) => {
         if (res.data.boards[0].name !== "Configuration"){
           this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
-            this.setState({boardIds:boardIds[i]})
+            this.setState({boardId:boardIds[i]})
             console.log(res.data)
           });
         }else{
@@ -167,14 +167,14 @@ class App extends Component {
             haveConf,
             configuration,
             mondayJsonIndex,
-            boardIds,
+            boardId,
             headerIndex,
             connectList,
             connectIds,
             exclusiveLabels,
             criteria,
     } = this.state;
-    console.log(boardIds)
+    console.log(boardId)
     return (
       <div>
         <div>
@@ -194,7 +194,7 @@ class App extends Component {
           <Update 
             configuration={configuration}
             mondayJsonIndex={mondayJsonIndex}
-            boardIds={boardIds}
+            boardId={boardId}
             localItemList={localItemList}
             headerIndex={headerIndex}
             connectList={connectList}

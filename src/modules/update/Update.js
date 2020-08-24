@@ -4,12 +4,8 @@ import { getBoardData } from './getBoardData'
 import { getLocalDataWithConfiguration } from './getLocalData'
 import { makeItemCreationQuery, makeUpdateQuery } from './query'
 import mondaySdk from "monday-sdk-js";
-import _ from "lodash"
-import { criteria } from '../../globalConf';
 
 const monday = mondaySdk()
-
-
 
 const getBaordIdList = (boardData) => {
   return Object.keys(boardData)
@@ -29,7 +25,6 @@ const isItemOnMonday = (csvItemIds, id, boardData, connectIds) => {
     isAllItemOnMonday &= csvItemIds[connectId] === boardData[id]['ids'][connectId]
     return isAllItemOnMonday
   }, true)
-  //return csvItemIds['id'] === boardData[id]['ids']['id']
 }
 
 const getItemId = (localData, itemIds, configuration, boardData, connectIds) => {
@@ -105,7 +100,7 @@ const processItem = ( localItem,
                       itemIds,
                       configuration,
                       boardData,
-                      boardIds,
+                      boardId,
                       connectIds,
                       exclusiveLabels,
                       criteria,
@@ -113,12 +108,12 @@ const processItem = ( localItem,
   const localData = getLocalDataWithConfiguration(localItem, configuration)
   const id = getItemId(localData, itemIds, configuration, boardData, connectIds)
   if(id === null && evaluateCriteria(criteria, localData)){
-    const query = makeItemCreationQuery(localData, boardIds)
+    const query = makeItemCreationQuery(localData, boardId)
     processQuery(query)
   }else if(id !== null){
     const updateDataList = getUpdateDataSet(localData, id, boardData, exclusiveLabels)
     if(updateDataList.length > 0){
-      const query = makeUpdateQuery(updateDataList, id, boardIds)
+      const query = makeUpdateQuery(updateDataList, id, boardId)
       console.log(query)
       processQuery(query)
     }
@@ -130,7 +125,7 @@ const Update = (props) => {
   const { localItemList,
           configuration,
           mondayJsonIndex,
-          boardIds,
+          boardId,
           headerIndex,
           connectList,
           connectIds,
@@ -139,7 +134,7 @@ const Update = (props) => {
         } = props;
         
   const updateMain = (e) => {
-    getBoardData(boardIds, mondayJsonIndex, connectList, connectIds).then(boardData =>  
+    getBoardData(boardId, mondayJsonIndex, connectList, connectIds).then(boardData =>  
       {
         let itemIds =  getBaordIdList(boardData)
         for (let i=0; i<localItemList.length; i++){
@@ -150,7 +145,7 @@ const Update = (props) => {
                                           itemIds,
                                           configuration,
                                           boardData,
-                                          boardIds,
+                                          boardId,
                                           connectIds,
                                           exclusiveLabels,
                                           criteria,
