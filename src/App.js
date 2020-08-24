@@ -5,6 +5,7 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
+import { CONNECT_LIST, header, ids, exclusiveLabels, criteria} from './globalConf'
 
 const monday = mondaySdk();
 
@@ -14,8 +15,8 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
-      headerIndex: 0,
-      boardIds: '',
+      headerIndex: null,
+      boardId: '',
       settings: {},
       context: {},
       boards: [],
@@ -23,27 +24,48 @@ class App extends Component {
       configuration: [],
       mondayJsonIndex: {},
       localItemList: null,
+      connectList: {},
+      connectIds: [],
+      exclusiveLabels: {},
+      criteria: {},
     }
   }
 
   componentDidMount() {
-    monday.listen("context", this.getContext);
+    monday.listen("context", this.getContext)
+    this.setState({ connectList:CONNECT_LIST,
+                    headerIndex:header.headerIndex,
+                    connectIds:ids,
+                    exclusiveLabels: exclusiveLabels,
+                    criteria: criteria,
+                  })
   }
 
   getContext = (res) => {
     const context = res.data;
     this.setState({ context });
-
     const boardIds = context.boardIds || [context.boardId];
-    this.setState({boardIds:boardIds})
-    monday
-      .api(`query { boards(ids:[${boardIds}]) { columns { title, type, settings_str, id } }}`)
+
+    for(let i=0; boardIds.length > i; i++){
+      monday
+      .api(`query { boards(ids:[${boardIds[i]}]) { name, columns { title, type, settings_str, id } }}`)
       .then((res) => {
-        this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
-          console.log(res.data.boards[0].columns)
-        });
-      });
-  };
+        if (res.data.boards[0].name !== "Configuration"){
+          this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
+            this.setState({boardId:boardIds[i]})
+            console.log(res.data)
+          });
+        }else{
+          monday
+          .api(`query { boards(ids:[${boardIds[i]}]) { items { name, group{ id }, column_values { id, value } } }}`)
+          .then((res) => {
+            const boardAllItems = res.data.boards[0].items;
+            console.log(boardAllItems)
+          })
+        }
+      }
+    )}
+  }
 
   getRows = (rows) => {
     console.log(rows)
@@ -62,17 +84,97 @@ class App extends Component {
   }
 
   setMondayJsonIndex = (configuration) => {
+    console.log(configuration)
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
+  getTargetLabelSet = (labelTitle, configuration) => {
+    for (let i=0; configuration.length>i; i++){
+      if(labelTitle === configuration[i]['title']){
+        console.log(configuration[i])
+        return configuration[i]['labels']
+      }
+    }
+    alert(`No ${labelTitle} in configuration. Something wrong`)
+    return null
+  }
+
+  translateTitleToNumber = (title, labelSet, la) => {
+    const connmaIndex = title.search(',')
+
+    const labelId = connmaIndex === -1 ? 
+    labelSet[title] 
+    : 
+    (
+      labelSet[title.slice(0, connmaIndex)] === undefined ?
+      undefined
+      :
+      labelSet[title.slice(0, connmaIndex)] + title.slice(connmaIndex) 
+    )
+    
+    if ( labelId === undefined ){
+      alert(`No "${connmaIndex === -1 ? title : title.slice(0, connmaIndex)}" in "${la}" column. Please check your configuration`)
+    } 
+    return labelId
+  }
+
+  /*
+  Labels and logic is separated by , (conma) inside string
+  If there is conma in the string, convert the string before the conma to number
+  Then add with the number and the remained portion including conma.
+  */
+  getIndex = (labels, configuration) => {
+    const newLabels = Object.keys(labels).reduce((newLabels, la) => {
+      const targetLabelSet = this.getTargetLabelSet(la, configuration) 
+      newLabels[la] = labels[la].map(title => this.translateTitleToNumber(title, targetLabelSet, la)) 
+      return newLabels
+    }, {}) 
+    return newLabels
+  }
+
+  getCsvTitle = (key, connectList) => {
+    const flippedConnectList = Object.keys(connectList).reduce((flippedList, key) => {
+      flippedList[connectList[key]] = key
+      return flippedList
+    }, {})
+    return flippedConnectList[key]
+  }
+
+  getReadyToUseCriteria = (criteria, configuration, connectList) => {
+    const tempCriteria = this.getIndex(criteria, configuration)
+    return Object.keys(tempCriteria).reduce((newCriteria, key) => {
+      newCriteria[key] = {
+                          criteria:tempCriteria[key],
+                          csv_title:this.getCsvTitle(key, connectList)
+                         }
+    return newCriteria                     
+    }, {})
+  }
+
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    this.setState({configuration:makeConfiguration(localItemList, mondayColumns, setHaveConf)}, () => 
+    const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
+    this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
+    this.setState({
+      exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
+      criteria:  this.getReadyToUseCriteria(criteria, this.state.configuration, connectList)
+    })
   }
 
   render() {
-    const { localItemList, mondayColumns, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
-    console.log(boardIds)
+    const { localItemList,
+            mondayColumns,
+            haveConf,
+            configuration,
+            mondayJsonIndex,
+            boardId,
+            headerIndex,
+            connectList,
+            connectIds,
+            exclusiveLabels,
+            criteria,
+    } = this.state;
+    console.log(boardId)
     return (
       <div>
         <div>
@@ -92,9 +194,13 @@ class App extends Component {
           <Update 
             configuration={configuration}
             mondayJsonIndex={mondayJsonIndex}
-            boardIds={boardIds}
+            boardId={boardId}
             localItemList={localItemList}
             headerIndex={headerIndex}
+            connectList={connectList}
+            connectIds={connectIds}
+            exclusiveLabels={exclusiveLabels}
+            criteria={criteria}
           />
           :  
           <ExcelTaker

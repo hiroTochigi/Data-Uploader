@@ -1,6 +1,4 @@
 
-
-
 export const CONNECT_LIST = {
   "WO NUM":"Name",
   "Reference ":"REFERENCE#",
@@ -25,4 +23,21 @@ export const CONNECT_LIST = {
   "BOM Date":"BOM Updated Date",
   "Revised Part List Date":"Revised Part List Date",
   "isBOMChanged":"BOM Changed?"
+}
+
+export const header = {
+  'headerIndex': 0,
+}
+
+export const ids = ['WO NUM']
+
+export const exclusiveLabels = {
+  'ALL PARTS RCVD': ["Kit Incomplete"],
+  'Status': ['ON HOLD'],
+  'ASSEMBLY': ['On Hold'],
+  'QC/TESTING': ['On Hold'],
+} 
+
+export const criteria = {
+  'Status': ['DONE,!=']
 }

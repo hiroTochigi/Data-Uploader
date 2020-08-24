@@ -1,6 +1,6 @@
 
 export const makeItemCreationQuery = (localData, board_id) => {
-  board_id = board_id[0].toString()
+  board_id = board_id.toString()
   const queryFirstPart = `mutation {create_item (board_id:${board_id}, group_id:topics, item_name:"${localData[0]['data']}",`
   const queryLastPart = `){id}}`
   const query = queryFirstPart + addColumnValues(localData, 'c') + queryLastPart
@@ -9,7 +9,7 @@ export const makeItemCreationQuery = (localData, board_id) => {
 
 export const makeUpdateQuery = (data, id, board_id) => {
   console.log(board_id)
-  board_id = board_id[0].toString()
+  board_id = board_id.toString()
   const queryFirstPart = `mutation {change_multiple_column_values (board_id:${board_id}, item_id:${id},`
   const queryLastPart = `){id}}`
   const query = queryFirstPart + addColumnValues(data, 'u') + queryLastPart
@@ -17,8 +17,6 @@ export const makeUpdateQuery = (data, id, board_id) => {
 }
 
 const addColumnValues = (localData, flag) => {
-  //const firstColumnValues = 'column_values:{'
-  //const closeColumnValues = '}'
   console.log(localData)
   const columnValues = localData.reduce((allData, data, index, list) => {
     if(flag === 'c' && data['id'] === 'name')
