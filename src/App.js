@@ -6,6 +6,7 @@ import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
 import { CONNECT_LIST, header, ids, exclusiveLabels, criteria} from './globalConf'
+import makeConfVariable from "./modules/update/makeConfVariable"
 
 const monday = mondaySdk();
 
@@ -57,10 +58,11 @@ class App extends Component {
           });
         }else{
           monday
-          .api(`query { boards(ids:[${boardIds[i]}]) { items { name, group{ id }, column_values { id, value } } }}`)
+          .api(`query { boards(ids:[${boardIds[i]}]) { groups{title}, items { name, group{ title }, column_values { id, value } } }}`)
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
             console.log(boardAllItems)
+            makeConfVariable(boardAllItems)
           })
         }
       }

@@ -42,7 +42,10 @@ const getItemId = (localData, itemIds, configuration, boardData, connectIds) => 
 }
 
 const isAbleThisLabelChanged = (boardLabelId, exclusiveLabels, title) => {
-  return exclusiveLabels[title].every(id => id !== boardLabelId)
+  return exclusiveLabels[title] !== undefined ?
+  exclusiveLabels[title].every(id => id !== boardLabelId) 
+  :
+  true
 }
 
 const isLocalAndMondayDataDifferent = (datum, id, boardData) => {
