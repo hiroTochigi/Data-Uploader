@@ -1,3 +1,4 @@
+import { isCompositeComponent } from "react-dom/test-utils";
 
 const getMondayTitle = (csv_title, connectList) => {
     try{
@@ -27,6 +28,7 @@ const addHeaderData = (colData, header, connectList) => {
         if (colData["title"] === getMondayTitle(header[i], connectList)){
             colData["csv_position"] = i
             colData["csv_title"] = header[i]
+            console.log(colData)
             return colData
         }
     }
@@ -62,6 +64,7 @@ const makeFlipedLabels = (obj) => {
 }
 
 const takeLabels = (data) =>{
+    console.log(data)
     if (data["type"] === "color" || data["type"] === "dropdown"){
         data["labels"] = makeLabels(data["settings_str"])
         data["flipLabels"] = makeFlipedLabels(data["settings_str"])
@@ -71,10 +74,9 @@ const takeLabels = (data) =>{
     return data
 }
 
-const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
-    return mondayColumnsInConnectListWithHeader.reduce((total, el) => {
-        return total &= el !== false ? true : false
-    }, true)
+const isWrongConf = (mondayColumnsInConnectListWithHeader) => {
+    console.log(mondayColumnsInConnectListWithHeader)
+    return mondayColumnsInConnectListWithHeader.every(el => el !== false)
 }
 
 const addJsonIndex = (mondayColumns) => {
@@ -90,12 +92,15 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf, connectLis
         const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
         const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
         const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
-        if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
+        console.log(isWrongConf(mondayColumnsInConnectListWithHeader))
+        if (isWrongConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
+            console.log(mondayColumnsInConnectList)
             return mondayColumnsInConnectList
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
         setHaveConf(true)
+        console.log(configuration)
         return configuration
     }
 }

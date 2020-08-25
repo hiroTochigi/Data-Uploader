@@ -34,20 +34,75 @@ class App extends Component {
 
   componentDidMount() {
     monday.listen("context", this.getContext)
-    this.setState({ connectList:CONNECT_LIST,
+    console.log(this.state.boardId)
+    /*this.setState({ connectList:CONNECT_LIST,
                     headerIndex:header.headerIndex,
                     connectIds:ids,
                     exclusiveLabels: exclusiveLabels,
                     criteria: criteria,
-                  })
+                  })*/
+  }
+
+  getConfigurationBoardId = (boardIds) => {
+    return new Promise((resolve, reject) => {
+      for(let i=0; boardIds.length > i; i++){
+        monday
+        .api(`query { boards(ids:[${boardIds[i]}]) { name }}`)
+        .then((res) => {
+          if (res.data.boards[0].name === "Configuration"){
+            resolve(boardIds[i])
+          }
+        }
+      )}
+    })
+  }
+  
+  getTargetBoardName = (targetBoardId) => {
+     return new Promise((resolve, reject) => {
+        monday
+        .api(`query { boards(ids:[${targetBoardId}]) { name }}`)
+        .then((res) => {
+            resolve(res.data.boards[0].name)
+        }
+      )
+    })
   }
 
   getContext = (res) => {
     const context = res.data;
-    this.setState({ context });
     const boardIds = context.boardIds || [context.boardId];
 
-    for(let i=0; boardIds.length > i; i++){
+    this.getConfigurationBoardId(boardIds).then((confId) => {
+      const confBoardId = confId
+      const targetBoardId = boardIds[0] !== confBoardId ? boardIds[0] : boardIds[1]
+      this.setState({boardId:targetBoardId})
+
+      this.getTargetBoardName(targetBoardId).then((res) => {
+        const boardName = res
+        monday
+          .api(`query { boards(ids:[${confBoardId}]) { items { name, group{ title }, column_values { id, value } } }}`)
+          .then((res) => {
+            const boardAllItems = res.data.boards[0].items;
+            console.log(boardAllItems)
+            console.log(boardName)
+            const confVarialbes = makeConfVariable(boardAllItems, boardName)
+            this.setState({connectList:confVarialbes.connect_list,
+                    headerIndex:0,
+                    connectIds:confVarialbes.ids,
+                    exclusiveLabels: confVarialbes.exclusiveLabelList,
+                    criteria: confVarialbes.criteriaList,
+                  })
+        })
+        monday
+          .api(`query { boards(ids:[${targetBoardId}]) { name, columns { title, type, settings_str, id } }}`)
+          .then((res) => {
+            this.setState({ mondayColumns: res.data.boards[0].columns })
+        })
+      })
+    })
+    
+
+/*    for(let i=0; boardIds.length > i; i++){
       monday
       .api(`query { boards(ids:[${boardIds[i]}]) { name, columns { title, type, settings_str, id } }}`)
       .then((res) => {
@@ -67,6 +122,7 @@ class App extends Component {
         }
       }
     )}
+    console.log("Hello World")*/
   }
 
   getRows = (rows) => {
@@ -103,7 +159,8 @@ class App extends Component {
 
   translateTitleToNumber = (title, labelSet, la) => {
     const connmaIndex = title.search(',')
-
+    console.log(title)
+    console.log(labelSet)
     const labelId = connmaIndex === -1 ? 
     labelSet[title] 
     : 
@@ -127,6 +184,9 @@ class App extends Component {
   */
   getIndex = (labels, configuration) => {
     const newLabels = Object.keys(labels).reduce((newLabels, la) => {
+      console.log(la)
+      console.log(labels[la])
+      console.log(configuration)
       const targetLabelSet = this.getTargetLabelSet(la, configuration) 
       newLabels[la] = labels[la].map(title => this.translateTitleToNumber(title, targetLabelSet, la)) 
       return newLabels
@@ -155,6 +215,7 @@ class App extends Component {
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
     const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
+    console.log(connectList)
     this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
     this.setState({
@@ -177,6 +238,9 @@ class App extends Component {
             criteria,
     } = this.state;
     console.log(boardId)
+    console.log(connectList)
+    console.log(exclusiveLabels)
+    console.log(criteria)
     return (
       <div>
         <div>
