@@ -5,7 +5,6 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
-import { CONNECT_LIST, header, ids, exclusiveLabels, criteria} from './globalConf'
 import makeConfVariable from "./modules/update/makeConfVariable"
 
 const monday = mondaySdk();
@@ -34,13 +33,6 @@ class App extends Component {
 
   componentDidMount() {
     monday.listen("context", this.getContext)
-    console.log(this.state.boardId)
-    /*this.setState({ connectList:CONNECT_LIST,
-                    headerIndex:header.headerIndex,
-                    connectIds:ids,
-                    exclusiveLabels: exclusiveLabels,
-                    criteria: criteria,
-                  })*/
   }
 
   getConfigurationBoardId = (boardIds) => {
@@ -83,8 +75,6 @@ class App extends Component {
           .api(`query { boards(ids:[${confBoardId}]) { items { name, group{ title }, column_values { id, value } } }}`)
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
-            console.log(boardAllItems)
-            console.log(boardName)
             const confVarialbes = makeConfVariable(boardAllItems, boardName)
             this.setState({connectList:confVarialbes.connect_list,
                     headerIndex:0,
@@ -100,33 +90,9 @@ class App extends Component {
         })
       })
     })
-    
-
-/*    for(let i=0; boardIds.length > i; i++){
-      monday
-      .api(`query { boards(ids:[${boardIds[i]}]) { name, columns { title, type, settings_str, id } }}`)
-      .then((res) => {
-        if (res.data.boards[0].name !== "Configuration"){
-          this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
-            this.setState({boardId:boardIds[i]})
-            console.log(res.data)
-          });
-        }else{
-          monday
-          .api(`query { boards(ids:[${boardIds[i]}]) { groups{title}, items { name, group{ title }, column_values { id, value } } }}`)
-          .then((res) => {
-            const boardAllItems = res.data.boards[0].items;
-            console.log(boardAllItems)
-            makeConfVariable(boardAllItems)
-          })
-        }
-      }
-    )}
-    console.log("Hello World")*/
   }
 
   getRows = (rows) => {
-    console.log(rows)
     this.setState({localItemList: rows})
   }
 
@@ -142,14 +108,12 @@ class App extends Component {
   }
 
   setMondayJsonIndex = (configuration) => {
-    console.log(configuration)
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
   getTargetLabelSet = (labelTitle, configuration) => {
     for (let i=0; configuration.length>i; i++){
       if(labelTitle === configuration[i]['title']){
-        console.log(configuration[i])
         return configuration[i]['labels']
       }
     }
@@ -159,8 +123,6 @@ class App extends Component {
 
   translateTitleToNumber = (title, labelSet, la) => {
     const connmaIndex = title.search(',')
-    console.log(title)
-    console.log(labelSet)
     const labelId = connmaIndex === -1 ? 
     labelSet[title] 
     : 
@@ -184,9 +146,6 @@ class App extends Component {
   */
   getIndex = (labels, configuration) => {
     const newLabels = Object.keys(labels).reduce((newLabels, la) => {
-      console.log(la)
-      console.log(labels[la])
-      console.log(configuration)
       const targetLabelSet = this.getTargetLabelSet(la, configuration) 
       newLabels[la] = labels[la].map(title => this.translateTitleToNumber(title, targetLabelSet, la)) 
       return newLabels
@@ -215,8 +174,8 @@ class App extends Component {
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
     const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
-    console.log(connectList)
-    this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
+    const header = localItemList[headerIndex].map(header => header.trim())
+    this.setState({configuration:makeConfiguration(header, mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
     this.setState({
       exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
@@ -237,10 +196,6 @@ class App extends Component {
             exclusiveLabels,
             criteria,
     } = this.state;
-    console.log(boardId)
-    console.log(connectList)
-    console.log(exclusiveLabels)
-    console.log(criteria)
     return (
       <div>
         <div>

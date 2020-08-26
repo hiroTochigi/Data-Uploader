@@ -28,7 +28,6 @@ const addHeaderData = (colData, header, connectList) => {
         if (colData["title"] === getMondayTitle(header[i], connectList)){
             colData["csv_position"] = i
             colData["csv_title"] = header[i]
-            console.log(colData)
             return colData
         }
     }
@@ -64,7 +63,6 @@ const makeFlipedLabels = (obj) => {
 }
 
 const takeLabels = (data) =>{
-    console.log(data)
     if (data["type"] === "color" || data["type"] === "dropdown"){
         data["labels"] = makeLabels(data["settings_str"])
         data["flipLabels"] = makeFlipedLabels(data["settings_str"])
@@ -74,8 +72,7 @@ const takeLabels = (data) =>{
     return data
 }
 
-const isWrongConf = (mondayColumnsInConnectListWithHeader) => {
-    console.log(mondayColumnsInConnectListWithHeader)
+const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
     return mondayColumnsInConnectListWithHeader.every(el => el !== false)
 }
 
@@ -92,15 +89,13 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf, connectLis
         const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
         const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
         const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
-        console.log(isWrongConf(mondayColumnsInConnectListWithHeader))
-        if (isWrongConf(mondayColumnsInConnectListWithHeader)){
+        if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
-            console.log(mondayColumnsInConnectList)
+            alert("Proper Configuration fails to create. Please Check out local titles and Monday column titles")
             return mondayColumnsInConnectList
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
         setHaveConf(true)
-        console.log(configuration)
         return configuration
     }
 }

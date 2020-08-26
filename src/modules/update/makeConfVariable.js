@@ -7,7 +7,6 @@ const makeconfvariable = (confBoardData, targetBoardName) => {
         }
         return variableList
     }, [])
-    console.log(preConfVariables)
 
     const connect_list = makeConnectList(preConfVariables)
     const ids = makeIdList(preConfVariables)
