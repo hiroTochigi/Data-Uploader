@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Button } from 'reactstrap'
 import { getBoardData } from './getBoardData' 
 import { getLocalDataWithConfiguration } from './getLocalData'
@@ -117,7 +117,6 @@ const processItem = ( localItem,
     const updateDataList = getUpdateDataSet(localData, id, boardData, exclusiveLabels)
     if(updateDataList.length > 0){
       const query = makeUpdateQuery(updateDataList, id, boardId)
-      console.log(query)
       processQuery(query)
     }
   }

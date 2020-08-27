@@ -236,11 +236,4 @@ class App extends Component {
   }
 }
 
-/*
-<InputGroupAddon addonType="prepend">
-  <Button color="info" style={{color: "white", zIndex: 0}} onClick={this.openFileBrowser.bind(this)}><i className="cui-file"></i> Browse&hellip;</Button>
-  <input type="file" hidden onChange={this.fileHandler.bind(this)} ref={this.fileInput} onClick={(event)=> { event.target.value = null }} style={{"padding":"10px"}} />                                
-</InputGroupAddon>
-*/
-
 export default App;

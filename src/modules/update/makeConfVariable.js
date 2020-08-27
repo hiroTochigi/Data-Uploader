@@ -1,4 +1,3 @@
-
 const makeconfvariable = (confBoardData, targetBoardName) => {
     let confVariables = {}
     const preConfVariables = confBoardData.reduce((variableList, datum) => {
@@ -8,14 +7,10 @@ const makeconfvariable = (confBoardData, targetBoardName) => {
         return variableList
     }, [])
 
-    const connect_list = makeConnectList(preConfVariables)
-    const ids = makeIdList(preConfVariables)
-    const exclusiveLabelList =  makeExclusiveLabelList(preConfVariables)
-    const criteriaList = makeCriteriaLabelList(preConfVariables)
-    confVariables['connect_list'] = connect_list
-    confVariables['ids'] = ids 
-    confVariables['exclusiveLabelList'] = exclusiveLabelList
-    confVariables['criteriaList'] = criteriaList
+    confVariables['connect_list'] = makeConnectList(preConfVariables)
+    confVariables['ids'] = makeIdList(preConfVariables) 
+    confVariables['exclusiveLabelList'] = makeExclusiveLabelList(preConfVariables)
+    confVariables['criteriaList'] = makeCriteriaLabelList(preConfVariables)
     return confVariables
 }
 

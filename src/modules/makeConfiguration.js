@@ -1,5 +1,3 @@
-import { isCompositeComponent } from "react-dom/test-utils";
-
 const getMondayTitle = (csv_title, connectList) => {
     try{
         if (!connectList[csv_title]){
