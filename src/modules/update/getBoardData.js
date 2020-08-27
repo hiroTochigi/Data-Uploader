@@ -1,5 +1,4 @@
 import mondaySdk from "monday-sdk-js";
-
 const monday = mondaySdk();
 
 export const getBoardData = (boardId, mondayJsonIndex, connectList, connectIds) => {

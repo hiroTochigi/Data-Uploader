@@ -5,7 +5,7 @@ import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
-import { CONNECT_LIST, header, ids, exclusiveLabels, criteria} from './globalConf'
+import makeConfVariable from "./modules/update/makeConfVariable"
 
 const monday = mondaySdk();
 
@@ -33,42 +33,66 @@ class App extends Component {
 
   componentDidMount() {
     monday.listen("context", this.getContext)
-    this.setState({ connectList:CONNECT_LIST,
-                    headerIndex:header.headerIndex,
-                    connectIds:ids,
-                    exclusiveLabels: exclusiveLabels,
-                    criteria: criteria,
-                  })
+  }
+
+  getConfigurationBoardId = (boardIds) => {
+    return new Promise((resolve, reject) => {
+      for(let i=0; boardIds.length > i; i++){
+        monday
+        .api(`query { boards(ids:[${boardIds[i]}]) { name }}`)
+        .then((res) => {
+          if (res.data.boards[0].name === "Configuration"){
+            resolve(boardIds[i])
+          }
+        }
+      )}
+    })
+  }
+  
+  getTargetBoardName = (targetBoardId) => {
+     return new Promise((resolve, reject) => {
+        monday
+        .api(`query { boards(ids:[${targetBoardId}]) { name }}`)
+        .then((res) => {
+            resolve(res.data.boards[0].name)
+        }
+      )
+    })
   }
 
   getContext = (res) => {
     const context = res.data;
-    this.setState({ context });
     const boardIds = context.boardIds || [context.boardId];
 
-    for(let i=0; boardIds.length > i; i++){
-      monday
-      .api(`query { boards(ids:[${boardIds[i]}]) { name, columns { title, type, settings_str, id } }}`)
-      .then((res) => {
-        if (res.data.boards[0].name !== "Configuration"){
-          this.setState({ mondayColumns: res.data.boards[0].columns }, () => {
-            this.setState({boardId:boardIds[i]})
-            console.log(res.data)
-          });
-        }else{
-          monday
-          .api(`query { boards(ids:[${boardIds[i]}]) { items { name, group{ id }, column_values { id, value } } }}`)
+    this.getConfigurationBoardId(boardIds).then((confId) => {
+      const confBoardId = confId
+      const targetBoardId = boardIds[0] !== confBoardId ? boardIds[0] : boardIds[1]
+      this.setState({boardId:targetBoardId})
+
+      this.getTargetBoardName(targetBoardId).then((res) => {
+        const boardName = res
+        monday
+          .api(`query { boards(ids:[${confBoardId}]) { items { name, group{ title }, column_values { id, value } } }}`)
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
-            console.log(boardAllItems)
-          })
-        }
-      }
-    )}
+            const confVarialbes = makeConfVariable(boardAllItems, boardName)
+            this.setState({connectList:confVarialbes.connect_list,
+                    headerIndex:0,
+                    connectIds:confVarialbes.ids,
+                    exclusiveLabels: confVarialbes.exclusiveLabelList,
+                    criteria: confVarialbes.criteriaList,
+                  })
+        })
+        monday
+          .api(`query { boards(ids:[${targetBoardId}]) { name, columns { title, type, settings_str, id } }}`)
+          .then((res) => {
+            this.setState({ mondayColumns: res.data.boards[0].columns })
+        })
+      })
+    })
   }
 
   getRows = (rows) => {
-    console.log(rows)
     this.setState({localItemList: rows})
   }
 
@@ -84,14 +108,12 @@ class App extends Component {
   }
 
   setMondayJsonIndex = (configuration) => {
-    console.log(configuration)
     this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
   getTargetLabelSet = (labelTitle, configuration) => {
     for (let i=0; configuration.length>i; i++){
       if(labelTitle === configuration[i]['title']){
-        console.log(configuration[i])
         return configuration[i]['labels']
       }
     }
@@ -101,7 +123,6 @@ class App extends Component {
 
   translateTitleToNumber = (title, labelSet, la) => {
     const connmaIndex = title.search(',')
-
     const labelId = connmaIndex === -1 ? 
     labelSet[title] 
     : 
@@ -153,7 +174,8 @@ class App extends Component {
 
   setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
     const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
-    this.setState({configuration:makeConfiguration(localItemList[headerIndex], mondayColumns, setHaveConf, connectList)}, () => 
+    const header = localItemList[headerIndex].map(header => header.trim())
+    this.setState({configuration:makeConfiguration(header, mondayColumns, setHaveConf, connectList)}, () => 
     this.setMondayJsonIndex(this.state.configuration))
     this.setState({
       exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
@@ -174,7 +196,6 @@ class App extends Component {
             exclusiveLabels,
             criteria,
     } = this.state;
-    console.log(boardId)
     return (
       <div>
         <div>
@@ -214,12 +235,5 @@ class App extends Component {
     );
   }
 }
-
-/*
-<InputGroupAddon addonType="prepend">
-  <Button color="info" style={{color: "white", zIndex: 0}} onClick={this.openFileBrowser.bind(this)}><i className="cui-file"></i> Browse&hellip;</Button>
-  <input type="file" hidden onChange={this.fileHandler.bind(this)} ref={this.fileInput} onClick={(event)=> { event.target.value = null }} style={{"padding":"10px"}} />                                
-</InputGroupAddon>
-*/
 
 export default App;

@@ -1,4 +1,3 @@
-
 const getMondayTitle = (csv_title, connectList) => {
     try{
         if (!connectList[csv_title]){
@@ -72,9 +71,7 @@ const takeLabels = (data) =>{
 }
 
 const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
-    return mondayColumnsInConnectListWithHeader.reduce((total, el) => {
-        return total &= el !== false ? true : false
-    }, true)
+    return mondayColumnsInConnectListWithHeader.every(el => el !== false)
 }
 
 const addJsonIndex = (mondayColumns) => {
@@ -92,6 +89,7 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf, connectLis
         const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
         if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
             setHaveConf(false)
+            alert("Proper Configuration fails to create. Please Check out local titles and Monday column titles")
             return mondayColumnsInConnectList
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
