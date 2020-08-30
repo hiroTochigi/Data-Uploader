@@ -27,7 +27,10 @@ Please look at [this page](https://monday.com/developers/apps/intro) to run on t
 
 ### Configuration
 Before running Data Uploader, you must configure Data Uploader.
-![](./images/Data Uploader.png)
+
+You must have Configuratio board
+
+![](https://github.com/hiroTochigi/Data-Uploader/blob/master/images/Data%20Uploader.png)
 
 
 ## Inspiration
