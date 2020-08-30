@@ -27,6 +27,7 @@ Please look at [this page](https://monday.com/developers/apps/intro) to run on t
 
 ### Configuration
 Before running Data Uploader, you must configure Data Uploader.
+![](./images/Data Uploader.png)
 
 
 ## Inspiration
