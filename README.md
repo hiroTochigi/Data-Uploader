@@ -1,5 +1,34 @@
 # Data Uploader
 
+## What Data Uploader does?
+
+Upload local Excel/CSV file on an existing Monday board
+
+Data type is limited. Data Uploader can upload the following data type
+1. Name
+1. Text
+1. Number
+1. Date
+1. Label
+1. Long-text
+
+## How to use it
+
+### Prerequisites 
+First of all, You must run this application on [Monday.com](https://monday.com/)
+Second, Data Uploader is designed to run on [Widget](https://support.monday.com/hc/en-us/articles/360007078739-The-Overview-Widget).
+
+### How to install it
+You can bring Data Uploader to your Monday account from [this link](https://auth.monday.com/oauth2/authorize?client_id=c083411c8ecb1a8cadbf3a0f493b5e12&response_type=install)
+
+Also, you can build and try to test Data Uploader in local environment.
+In the case, you must have node(v10.22.0 or above) and npm(6.14.6 or above)
+Please look at [this page](https://monday.com/developers/apps/intro) to run on this application on your account.
+
+### Configuration
+Before running Data Uploader, you must configure Data Uploader.
+
+
 ## Inspiration
 We use an ERP to manage our daily jobs, but the ERP is very poor to present job flows.
 
