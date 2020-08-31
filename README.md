@@ -29,8 +29,8 @@ Please look at [this page](https://monday.com/developers/apps/intro) to run on t
 Before running Data Uploader, you must configure Data Uploader.
 
 You must have Configuratio board
-
 ![](https://raw.githubusercontent.com/hiroTochigi/Data-Uploader/master/images/Data%20Uploader.png)
+
 
 This is an example of Configuration board.
 ![](https://raw.githubusercontent.com/hiroTochigi/Data-Uploader/master/images/Configuration.png)
