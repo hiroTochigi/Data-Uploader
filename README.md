@@ -30,7 +30,7 @@ Before running Data Uploader, you must configure Data Uploader.
 
 You must have Configuratio board
 
-![](https://github.com/hiroTochigi/Data-Uploader/blob/master/images/Data%20Uploader.png)
+![](https://raw.githubusercontent.com/hiroTochigi/Data-Uploader/master/images/Data%20Uploader.png)
 
 This is an example of Configuration board.
 ![](https://github.com/hiroTochigi/Data-Uploader/blob/master/images/Configuraton.png)
