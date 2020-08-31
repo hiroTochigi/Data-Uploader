@@ -32,6 +32,17 @@ You must have Configuratio board
 
 ![](https://github.com/hiroTochigi/Data-Uploader/blob/master/images/Data%20Uploader.png)
 
+This is an example of Configuration board.
+![](https://github.com/hiroTochigi/Data-Uploader/blob/master/images/Configuraton.png)
+1. Group name must be a name of a target board.
+1. The first column must be local Excel/CSV file headers
+1. The second column: Monday must be column headers in the target Board
+1. `Is ID?` column indicates which column should be identifier. Data Uploader compares values of this column to identify each item on both data set. In the above example, Request and Name are the IDs.
+1. `Exclusive Labels` column informs Data Uploader what Label value should not be changed. In the above example, If `Status` column on Marketig board has value `Stuck` or `On hold`, Data Uploader does not change `Status` column whatever the local data set has in `Status` column. (Only works on Label type)
+1. `Critedia` column informs Data Uploader updating criteria. In the above example, if some rows in the local data set has `Status` column having value `Completed`, Data Uploader does not update the rows on Monday board. (Only works on Label type)
+
+
+
 
 ## Inspiration
 We use an ERP to manage our daily jobs, but the ERP is very poor to present job flows.
