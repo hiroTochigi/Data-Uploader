@@ -61,13 +61,13 @@ In our use case, it is a serious bottleneck.
 
 Sometimes, we have to upload a few dozens jobs in a day.
 
-The intense manual data entry task is not only to waste our colleagues' productive time but also cause data integrity problem which might cause serious problem.
+The intense manual data entry task is not only to waste our colleagues' productive time but also cause data integrity problem which might induce serious problems.
 
-This application can take Excel file and update jobs via Monday GraphQL API.
+This application can take Excel file and update items via Monday GraphQL API.
 
 User can specify id on Monday board data and local Excel data, so this app choose new data from Excel file and upload them.
 
-This app let our colleges release their tedious data entry tasks and provides error free data entry services.
+This app let our colleagues release from their tedious data entry tasks and provides error free data entry services.
 
 ## What it does
 Data Uploader takes local Excel file and update Monday board.
