@@ -35,7 +35,7 @@ const addHeaderData = (colData, header) => {
     return false
 }
 
-const flipKeyValue = (obj) => {
+const makeLabels = (obj) => {
     obj = JSON.parse(obj)
     obj = obj.labels
     if (!Array.isArray(obj)){
@@ -44,7 +44,6 @@ const flipKeyValue = (obj) => {
             return ret;
         }, {});
     }else{
-        console.log(obj)
         return obj.reduce((labels, el) => {
             labels[el['name']] = el['id']
             return labels
@@ -52,9 +51,23 @@ const flipKeyValue = (obj) => {
     }
 }
 
+const makeFlipedLabels = (obj) => {
+    obj = JSON.parse(obj)
+    const preLabels = obj.labels
+    return Array.isArray(preLabels) ? 
+    preLabels.reduce((labels, el) => {
+        labels[el['id']] = el['name'] 
+        return labels
+      } , {})  
+    : 
+    (preLabels === undefined) ? {} : preLabels
+        
+}
+
 const takeLabels = (data) =>{
     if (data["type"] === "color" || data["type"] === "dropdown"){
-        data["labels"] = flipKeyValue(data["settings_str"])
+        data["labels"] = makeLabels(data["settings_str"])
+        data["flipLabels"] = makeFlipedLabels(data["settings_str"])
     }else{
         data['labels'] = {};
     }
@@ -86,6 +99,7 @@ export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
         }
         const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
         setHaveConf(true)
+        console.log(configuration)
         return configuration
     }
 }
