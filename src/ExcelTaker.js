@@ -46,7 +46,7 @@ class ExcelTaker extends Component {
         
         //check for file extension and pass only if it is .xlsx and display error message otherwise
         const fileExtention = fileName.slice(fileName.lastIndexOf('.')+1)
-        if(fileExtention === "xlsx" || fileExtention === "xls" || fileExtention === "csv"){
+        if(fileExtention === "xlsx" || fileExtention === "xls" || fileExtention === "ods" || fileExtention === "csv"){
           this.setState({
             uploadedFileName: fileName,
             isFormInvalid: false

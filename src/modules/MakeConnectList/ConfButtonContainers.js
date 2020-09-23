@@ -1,7 +1,6 @@
 import React from 'react';
 import "./ConfButtonContainers.css" 
 import{ ConfButtonOne, ConfButtonTwo, ConfiguredConfButton}  from "./ConfButton"
-import { CONNECT_LIST } from './../../globalConf'
 import { Button, ButtonGroup } from 'reactstrap';
 
 const ConfButtonContainers = (props) => {
@@ -34,10 +33,10 @@ const localItemButtons = localItemList[headerIndex].reduce((buttons, el) => {
     }
 }, [])
 
-const configuredConfButton = Object.keys(CONNECT_LIST).reduce((buttons, el) => {
+/*const configuredConfButton = Object.keys(CONNECT_LIST).reduce((buttons, el) => {
     buttons.push(<ConfiguredConfButton name1={el} name2={CONNECT_LIST[el]} type='LONG-TEXT'/>)
     return buttons
-}, [])
+}, [])*/
 
     console.log(isEditMode)
 return(
