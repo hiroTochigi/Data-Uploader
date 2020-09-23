@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ConfButtonContainers from "./ConfButtonContainers"
 import ChooseHeaderIndex from "./ChooseHeaderIndex"
+import { each } from 'lodash';
 
 class MakeConnectList extends Component {
   constructor(props){
@@ -9,10 +10,32 @@ class MakeConnectList extends Component {
       isEditMode: true,
       isDeleteMode: false,
       isOpenTrashCan: false,
-      confedHeaders: {},
+      confedHeaders: [],
       preConfHeader: '',
       trashCan: [],
     }
+  }
+
+  doesNeedMakeObj = (confedHeaders) => {
+    if (confedHeaders.length === 0){
+      return true 
+    }else{
+      return confedHeaders.every(conf => conf.local !== null || conf.monday !== null)
+    }
+  }
+
+  getHeader = (header) => {
+    const confedHeaders = this.state.confedHeaders
+    if (this.doesNeedMakeObj(confedHeaders)){
+      /*make obj 
+      {
+        local: null
+        monday: null
+      }
+
+      */
+    }
+    this.setState({})
   }
 
 render() {

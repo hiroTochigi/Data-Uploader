@@ -2,6 +2,7 @@
     display: flex;
     align-items: stretch;
     justify-content:space-around;  
+    margin-top: 40px;
 }
 
 .sm-container{
@@ -18,12 +19,12 @@
     flex-grow: 1;
 }
 
-.tool{
+/*.tool{
     position: fixed; 
     top: 200;
     right: 0;
     padding-right: 1%;
-}
+}*/
 
 .container-text{
     text-align: center;
