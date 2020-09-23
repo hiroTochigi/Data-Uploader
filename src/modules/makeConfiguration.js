@@ -86,6 +86,9 @@ const addJsonIndex = (mondayColumnsInConnectList) => {
 }
 
 export const makeConfiguration = (header, mondayColumns, setHaveConf) => {
+    console.log(header)
+    console.log(mondayColumns)
+    console.log(setHaveConf)
     if ( header === null){
         console.log("Upload Excel File")
         setHaveConf(false)

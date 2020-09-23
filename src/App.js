@@ -17,7 +17,7 @@ class App extends Component {
     this.state={
       haveConnectList: true,
       haveConf: false,
-      headerIndex: null,
+      headerIndex: 0,
       boardIds: '',
       settings: {},
       context: {},
@@ -86,6 +86,7 @@ class App extends Component {
   render() {
     const { localItemList, mondayColumns,haveConnectList, haveConf, configuration, mondayJsonIndex, boardIds, headerIndex } = this.state;
     console.log(boardIds)
+    console.log(haveConnectList)
     return (
       <div>
       <Banner 
