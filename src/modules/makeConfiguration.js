@@ -79,23 +79,21 @@ const addJsonIndex = (mondayColumns) => {
     return mondayColumns
 }
 
-export const makeConfiguration = (header, mondayColumns, setHaveConf, connectList) => {
-
-    if ( header === null){
-        console.log("Upload Excel File")
-        setHaveConf(false)
-    }else{
-        const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
-        const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
-        const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
-        if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
-            setHaveConf(false)
-            alert("Proper Configuration fails to create. Please Check out local titles and Monday column titles")
-            return mondayColumnsInConnectList
-        }
-        const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
-        setHaveConf(true)
-        console.log(configuration)
-        return configuration
-    }
+export const makeConfiguration = (header, mondayColumns, connectList) => {
+  return new Promise((resolve, reject) => {
+        if ( header === null){
+            reject("Upload Excel File")
+        }else if ( header.length === 0 ){
+            reject("Upload wrong Excel File")
+        }else{
+            const mondayColumnsWithIndex = addJsonIndex(mondayColumns)
+            const mondayColumnsInConnectList = mondayColumnsWithIndex.filter(col => findColumnInConnectList(col, connectList))
+            const mondayColumnsInConnectListWithHeader = mondayColumnsInConnectList.map(data => addHeaderData(data, header, connectList))
+            if (!isCorrectConf(mondayColumnsInConnectListWithHeader)){
+                reject("Proper Configuration fails to create. Please Check out local titles and Monday column titles")
+            }
+            const configuration = mondayColumnsInConnectListWithHeader.map(data => takeLabels(data))
+            resolve(configuration)
+        }  
+    })
 }

@@ -189,34 +189,38 @@ class App extends Component {
     }, {})
   }
 
-  setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
+  processLocalData = (localItemList, mondayColumns) => {
     const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
     
-    //write error handling 
-    //if script cannot process this function, configuration is wrong
-    const header = localItemList[headerIndex].map(header => header.trim())
+    this.setState({localItemList: localItemList})
+    let header = []
+    try{
+      header = localItemList[headerIndex].map(header => header.trim())
+    }catch(error){
+       if (error instanceof TypeError){
+         alert('Configuration is wrong or upload wrong data')
+       }else{
+         alert('something wrong')
+       }
+    }
 
-    //call make configuration outside setState function
-    //need to have promise obj to wait necessary calculation
-    //also, need to separate make configuration and check configuration
-    this.setState({
-      configuration:makeConfiguration(header, mondayColumns, setHaveConf, connectList)}, () => {
-        this.setMondayJsonIndex(this.state.configuration)
-      })
-    
-    // Get haveConf val here because makeConfiguration decide if it can make configuration 
-    // and store value in haveConf 
-    if(this.state.haveConf){
+    makeConfiguration(header, mondayColumns, connectList).then((conf) => {
       this.setState({
-        exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
-        criteria:  this.getReadyToUseCriteria(criteria, this.state.configuration, connectList)
+        configuration: conf,
+        mondayJsonIndex: this.makeMondayJsonIndex(conf),
+        exclusiveLabels: this.getIndex(exclusiveLabels, conf),
+        criteria: this.getReadyToUseCriteria(criteria, conf, connectList),
+        haveConf: true,
       })
-    }else{
+    })
+    .catch(err => {
       this.setState({
         haveConnectList:false,
         headerIndex: null,
+        haveConf: false,
       })
-    }
+      alert(err)
+    })
   }
 
   render() {
@@ -256,10 +260,8 @@ class App extends Component {
           :
             haveConnectList ?   
               <ExcelTaker
-                getRows={this.getRows}
-                setConfiguration={this.setConfiguration}
+                processLocalData={this.processLocalData}
                 mondayColumns={mondayColumns}
-                setHaveConf={this.setHaveConf}
               /> 
               :
               <MakeConnectList 
