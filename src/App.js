@@ -109,14 +109,6 @@ class App extends Component {
     })
   }
 
-  getRows = (rows) => {
-    this.setState({localItemList: rows})
-  }
-
-  setHaveConf = (val) => {
-    this.setState({haveConf:val})
-  }
-
   makeMondayJsonIndex = (configuration) => {
     return configuration.reduce((mondayJsonIndex, data) => {
       mondayJsonIndex[data['title']] = {'json_index':data['json_index'], 'type':data['type']}
@@ -189,9 +181,8 @@ class App extends Component {
     }, {})
   }
 
-  processLocalData = (localItemList, mondayColumns) => {
-    const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
-    
+  processLocalData = (localItemList) => {
+    const { connectList, headerIndex, exclusiveLabels, criteria, mondayColumns } = this.state
     this.setState({localItemList: localItemList})
     let header = []
     try{
@@ -261,7 +252,6 @@ class App extends Component {
             haveConnectList ?   
               <ExcelTaker
                 processLocalData={this.processLocalData}
-                mondayColumns={mondayColumns}
               /> 
               :
               <MakeConnectList 

@@ -19,7 +19,7 @@ class ExcelTaker extends Component {
     renderFile = (fileObj, fileName) => {
         //just pass the fileObj as parameter
         const {uploadedFileName} = this.state;
-        const {mondayColumns} = this.props;
+        //const {mondayColumns} = this.props;
         ExcelRenderer(fileObj, (err, resp) => {
           if(err){
             console.log(err);            
@@ -29,7 +29,7 @@ class ExcelTaker extends Component {
               dataLoaded: true,
             });
             if (uploadedFileName !== fileName){
-                this.processLocalData(resp.rows, mondayColumns)
+                this.processLocalData(resp.rows)
             }
           }
         }); 

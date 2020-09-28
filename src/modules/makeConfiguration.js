@@ -80,6 +80,7 @@ const addJsonIndex = (mondayColumns) => {
 }
 
 export const makeConfiguration = (header, mondayColumns, connectList) => {
+    console.log(mondayColumns)
   return new Promise((resolve, reject) => {
         if ( header === null){
             reject("Upload Excel File")
