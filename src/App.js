@@ -116,10 +116,6 @@ class App extends Component {
     }, {})
   }
 
-  setMondayJsonIndex = (configuration) => {
-    this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
-  }
-
   getTargetLabelSet = (labelTitle, configuration) => {
     for (let i=0; configuration.length>i; i++){
       if(labelTitle === configuration[i]['title']){
@@ -181,6 +177,12 @@ class App extends Component {
     }, {})
   }
 
+  /*
+  This method is called at ExcelTaker when a local file is uploaded
+  This method does three jobs
+  1. Make header of the local file
+  2. Make configuration file from the three data; local header, target Monday metadata, and configuration board data
+  */
   processLocalData = (localItemList) => {
     const { connectList, headerIndex, exclusiveLabels, criteria, mondayColumns } = this.state
     this.setState({localItemList: localItemList})
