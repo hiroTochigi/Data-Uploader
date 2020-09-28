@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
 import mondaySdk from "monday-sdk-js";
 import './App.css';
 import ExcelTaker from './ExcelTaker'
@@ -91,15 +92,18 @@ class App extends Component {
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
             const confVarialbes = makeConfVariable(boardAllItems, boardName)
-            this.setState({
-                    //headerIndedx should be taken from configuration board.
-                    headerIndex:0,
-                    connectList:confVarialbes.connect_list,
-                    connectIds:confVarialbes.ids,
-                    exclusiveLabels: confVarialbes.exclusiveLabelList,
-                    criteria: confVarialbes.criteriaList,
-                  })
-        })
+            if(confVarialbes.length === 0){}
+            else{
+              this.setState({
+                //headerIndedx should be taken from configuration board.
+                headerIndex:0,
+                connectList:confVarialbes.connect_list,
+                connectIds:confVarialbes.ids,
+                exclusiveLabels: confVarialbes.exclusiveLabelList,
+                criteria: confVarialbes.criteriaList,
+              })
+            }
+          })
         monday
           .api(`query { boards(ids:[${targetBoardId}]) { name, columns { title, type, settings_str, id } }}`)
           .then((res) => {
@@ -186,34 +190,44 @@ class App extends Component {
   processLocalData = (localItemList) => {
     const { connectList, headerIndex, exclusiveLabels, criteria, mondayColumns } = this.state
     this.setState({localItemList: localItemList})
+
     let header = []
     try{
       header = localItemList[headerIndex].map(header => header.trim())
     }catch(error){
        if (error instanceof TypeError){
-         alert('Configuration is wrong or upload wrong data')
+         console.log('Configuration is wrong or upload wrong data')
        }else{
-         alert('something wrong')
+         console.log('something wrong')
        }
     }
 
-    makeConfiguration(header, mondayColumns, connectList).then((conf) => {
-      this.setState({
-        configuration: conf,
-        mondayJsonIndex: this.makeMondayJsonIndex(conf),
-        exclusiveLabels: this.getIndex(exclusiveLabels, conf),
-        criteria: this.getReadyToUseCriteria(criteria, conf, connectList),
-        haveConf: true,
-      })
-    })
-    .catch(err => {
-      this.setState({
+    if(isEmpty(connectList)){
+       this.setState({
         haveConnectList:false,
         headerIndex: null,
         haveConf: false,
       })
-      alert(err)
-    })
+      alert('There is no connect list')
+    }else{
+      makeConfiguration(header, mondayColumns, connectList).then((conf) => {
+        this.setState({
+          configuration: conf,
+          mondayJsonIndex: this.makeMondayJsonIndex(conf),
+          exclusiveLabels: this.getIndex(exclusiveLabels, conf),
+          criteria: this.getReadyToUseCriteria(criteria, conf, connectList),
+          haveConf: true,
+        })
+      })
+      .catch(err => {
+        this.setState({
+          haveConnectList:false,
+          headerIndex: null,
+          haveConf: false,
+        })
+        alert(err)
+      })
+    }
   }
 
   render() {
@@ -230,7 +244,6 @@ class App extends Component {
             criteria,
             haveConnectList,
     } = this.state;
-    
     return (
       <div>
       <Banner 

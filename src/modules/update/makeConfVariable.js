@@ -7,6 +7,11 @@ const makeconfvariable = (confBoardData, targetBoardName) => {
         return variableList
     }, [])
 
+    console.log(preConfVariables.length)
+    if(preConfVariables.length === 0){
+        return [] 
+    }
+
     confVariables['connect_list'] = makeConnectList(preConfVariables)
     confVariables['ids'] = makeIdList(preConfVariables) 
     confVariables['exclusiveLabelList'] = makeExclusiveLabelList(preConfVariables)

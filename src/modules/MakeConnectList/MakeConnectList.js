@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ConfButtonContainers from "./ConfButtonContainers"
 import ChooseHeaderIndex from "./ChooseHeaderIndex"
-import { each } from 'lodash';
 
 class MakeConnectList extends Component {
   constructor(props){
