@@ -10,6 +10,10 @@
   text-decoration: none;
 }
 
+.button-one-disabled {
+  background: #CCF4E3;
+}
+
 .button-one p, .button-two p {
   margin: 0 0 15px;
 }
@@ -33,6 +37,10 @@
   max-width: 80%;
   margin: 10px 10%;
   text-decoration: none;
+}
+
+.button-two-disabled {
+  background: #F9DADE;
 }
 
 /* Disable color: #FFB6C1 */

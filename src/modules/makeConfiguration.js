@@ -71,7 +71,6 @@ const takeLabels = (data) =>{
 }
 
 const isCorrectConf = (mondayColumnsInConnectListWithHeader) => {
-    console.log(mondayColumnsInConnectListWithHeader)
     return mondayColumnsInConnectListWithHeader.every(el => el !== false)
 }
 

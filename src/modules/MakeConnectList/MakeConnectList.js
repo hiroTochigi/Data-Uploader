@@ -5,14 +5,6 @@ import ChooseHeaderIndex from "./ChooseHeaderIndex"
 class MakeConnectList extends Component {
   constructor(props){
     super(props);
-    this.state={
-      isEditMode: true,
-      isDeleteMode: false,
-      isOpenTrashCan: false,
-      confedHeaders: [],
-      preConfHeader: '',
-      trashCan: [],
-    }
   }
 
   doesNeedMakeObj = (confedHeaders) => {
@@ -44,14 +36,6 @@ const  {mondayColumns,
         getHeaderIndex,
       } = this.props
 
-const {isEditMode,
-       isDeleteMode,
-       isOpenTrashCan,
-       confedHeaders,
-       preConfHeader,
-       trashCan,
-      } = this.state
-
   return (
     headerIndex === null ?
     <ChooseHeaderIndex 
@@ -63,16 +47,8 @@ const {isEditMode,
       localItemList={localItemList}
       mondayColumns={mondayColumns}
       headerIndex={headerIndex}
-      isEditMode={isEditMode}
-      isDeleteMode={isDeleteMode}
-      isOpenTrashCan={isOpenTrashCan}
-      confedHeaders={confedHeaders}
-      preConfHeader={preConfHeader}
-      trashCan={trashCan}
     />
-
     )
-
   }
 }
 export default MakeConnectList;
