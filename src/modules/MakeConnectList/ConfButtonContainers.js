@@ -13,18 +13,59 @@ class ConfButtonContainers extends Component {
       isDeleteMode: false,
       isOpenTrashCan: false,
       confedHeaders: {},
+      confedHeadersButtons: [],
       preConfHeader: [],
       trashCan: [],
+      masterMondayButtons: [],
       mondayButtons: [],
+      masterLocalButtons: [],
       localButtons: [],
       localDataSet: {},
     }
   }
+    
+    localButtons = this.makeLocalItemButtons()
+    mondayButtons = this.makeMondayButtons()
 
     componentDidUpdate(){
-        const { preConfHeader, localDataSet } = this.state
-        console.log(preConfHeader)
-        console.log(localDataSet)
+        const { preConfHeader, 
+                localDataSet,
+                confedHeaders,
+                localButtons,
+                mondayButtons,
+                confedHeadersButtons,
+            } = this.state
+
+            console.log(confedHeadersButtons)
+        if (preConfHeader.length === 2){
+            const preConfString = typeof preConfHeader[0]['type'] === 'string' ?  preConfHeader[0] : preConfHeader[1]
+            const preConfGroup = typeof preConfHeader[0]['type'] === 'object' ?  preConfHeader[0] : preConfHeader[1]
+
+            if (this.isLegitimateCombination(preConfString['type'], preConfGroup['type'])){
+                this.setState(preState =>{
+                    let confedHeaders = {...preState.confedHeaders}
+                    confedHeaders[preConfString['name']] = preConfGroup['name']
+                    return {confedHeaders}
+                })
+                this.setState(preState =>{
+                    let confedHeadersButtons = [...preState.confedHeadersButtons]
+                    console.log(confedHeadersButtons)
+                    confedHeadersButtons.push({
+                        'local': this.getTargetButton(preConfString['name'], localButtons),
+                        'monday': this.getTargetButton(preConfGroup['name'], mondayButtons),
+                    })
+                    return {confedHeadersButtons}
+                })
+                this.setState({
+                    preConfHeader: [],
+                    localButtons: this.makeNewButtonSet(preConfString['name'], localButtons),
+                    mondayButtons: this.makeNewButtonSet(preConfGroup['name'], mondayButtons), 
+                }, ()=> {
+                    this.localButtons = this.state.localButtons
+                    this.mondayButtons = this.state.mondayButtons
+                })
+            }
+        }
     }
 
     componentDidMount(){
@@ -33,6 +74,22 @@ class ConfButtonContainers extends Component {
             localButtons: this.localButtons,
             localDataSet: this.makeLocalDataSet()
         })
+    }
+    
+    isLegitimateCombination = (typeString, typeGroup) => {
+        return typeGroup.some(type => type === typeString)
+    }
+
+    makeNewButtonSet = (title, buttons) => {
+        return buttons.filter(button => button.props.title !== title)
+    }
+
+    getTargetButton = (title, buttons) => {
+        for (const button of buttons){
+            if (button.props.title === title) return button
+        }
+        console.log('something wrong')
+        return null
     }
 
     makeLocalDataSet = () => {
@@ -50,18 +107,22 @@ class ConfButtonContainers extends Component {
     }
 
     makeNewButtonDynamically = (button, name) => {
-        const {title, type, whichButton} = button.props
+        const {title, type, whichButton, index} = button.props
         return title !== name ?
         (
             whichButton === 'monday' ?
             <ConfButtonOneDisabled 
             type={type}
             title={title}
+            key={title}
+            index={index}
             />
             :
             <ConfButtonTwoDisabled 
             type={type}
             title={title}
+            key={title}
+            index={index}
             />
         )
         :
@@ -86,8 +147,10 @@ class ConfButtonContainers extends Component {
         }
     }
 
+
+
     getTypes = (name, dataSet) => {
-        let types = ['name', 'text', 'long-text']
+        let types = ['name', 'color', 'text', 'long-text']
         let isNumber = true
         let isDate = true
         for (let data of dataSet){
@@ -105,11 +168,13 @@ class ConfButtonContainers extends Component {
 
     makeMondayButtons = () => {
         const buttons = this.props.mondayColumns.map(
-            el => <ConfButtonOne 
+            (el, index) => <ConfButtonOne 
+            key={el.title}
             type={el.type}
             title={el.title}
             whichButton={'monday'}
-            getPreConfHeader={this.getPreConfHeader} 
+            getPreConfHeader={this.getPreConfHeader}
+            index={index}
             />
         )
         return buttons
@@ -117,15 +182,17 @@ class ConfButtonContainers extends Component {
 
     makeLocalItemButtons = () => {
         const localDataSet = this.makeLocalDataSet()
-        const buttons = this.props.localItemList[this.props.headerIndex].reduce((buttons, name) => {
+        const buttons = this.props.localItemList[this.props.headerIndex].reduce((buttons, name, index) => {
         if (name === "" || name === null){
             return buttons
         }else{
             buttons.push(<ConfButtonTwo 
+                        key={name}
                         title={name}
                         types={this.getTypes(name, localDataSet[name])}
                         whichButton={'local'}
-                        getPreConfHeader={this.getPreConfHeader} 
+                        getPreConfHeader={this.getPreConfHeader}
+                        index={index}
                          />)
                 return buttons
             }
@@ -133,8 +200,6 @@ class ConfButtonContainers extends Component {
         return buttons
     }
 
-    localButtons = this.makeLocalItemButtons()
-    mondayButtons = this.makeMondayButtons()
 
     /*const configuredConfButton = Object.keys(CONNECT_LIST).reduce((buttons, el) => {
         buttons.push(<ConfiguredConfButton name1={el} name2={CONNECT_LIST[el]} type='LONG-TEXT'/>)
@@ -146,11 +211,16 @@ class ConfButtonContainers extends Component {
         const {
             isEditMode,
             isDeleteMode,
+            mondayButtons,
+            localButtons,
             isOpenTrashCan,
             confedHeaders,
             preConfHeader,
             trashCan,
         } = this.state
+        
+        const mButtons = ( mondayButtons === undefined || this.mondayButtons[0].whichButton === undefined) ? this.mondayButtons : mondayButtons
+        const lButtons = (localButtons === undefined || this.localButtons[0].whichButton === undefined ) ? this.localButtons : localButtons 
 
         return(
             <div>
@@ -164,11 +234,11 @@ class ConfButtonContainers extends Component {
                 <div className="wrap-container"> 
                     <div className="sm-container">
                         <h3 className="container-text">Excel Header</h3>
-                        {this.localButtons}
+                        {lButtons}
                     </div>
                     <div className="sm-container">
                         <h3 className="container-text">Monday Header</h3>
-                        {this.mondayButtons}
+                        {mButtons}
                     </div>
                     <div className="big-container">
                         <h3 className="container-text">Configuration</h3>
