@@ -9,7 +9,7 @@ const makeLocalDataWithConf = (localData, confData) => {
 const transformData = (data, confData) => {
   const dataType = confData['type']
   if (dataType === 'date'){
-    return ExcelDateToJSDate(data)
+    return excelDateToJSDate(data)
   }else if(dataType === 'color'){
     return changeStatusFormat(confData['labels'], data)
   }else if(dataType === 'text' || dataType === 'long-text'){
@@ -35,7 +35,7 @@ const makeTwoDigitDateElement = (date) => {
 /*
 Monday only takes YYYY-MM-DD date format 
 */
-const ExcelDateToJSDate = (date) => {
+export const excelDateToJSDate = (date) => {
   if (date === undefined || date === 'Cabcekked' || date === ''){
     return ""
   }

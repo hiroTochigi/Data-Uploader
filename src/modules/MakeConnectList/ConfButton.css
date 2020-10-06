@@ -1,0 +1,93 @@
+.button-one {
+  background: #00C875; 
+  border-radius: 6px;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  color: #FFFFFF;
+  max-width: 80%;
+  margin: 10px 10%;
+  text-decoration: none;
+}
+
+.button-one-disabled {
+  background: #CCF4E3;
+}
+
+.button-one p, .button-two p {
+  margin: 0 0 15px;
+}
+/* Disable color: #FFB6C1 */
+
+.button-one .text {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #323338; 
+  margin: 0 0 15px;
+  font-size: 16px;
+}
+
+.button-two {
+  background: #FF7575; 
+  border-radius: 6px;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  color: #FFFFFF;
+  max-width: 80%;
+  margin: 10px 10%;
+  text-decoration: none;
+}
+
+.button-two-disabled {
+  background: #F9DADE;
+}
+
+/* Disable color: #FFB6C1 */
+
+.button-two .text {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #323338; 
+  margin: 0 0 15px;
+  font-size: 16px;
+}
+
+.conf-button-box{
+  border-radius: 6px;
+  max-width: 100%;
+  margin: 10px 10%;
+}
+
+.name-box{
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.name1{
+  background: #00C875; 
+  padding: 10px;
+  text-align: center;
+  color: #FFFFFF;
+  text-decoration: none;
+  margin: 0;
+  flex-grow: 1; 
+}
+
+.name2{
+  background: #FF7575; 
+  padding: 10px;
+  text-align: center;
+  color: #FFFFFF;
+  text-decoration: none;
+  margin: 0;
+  flex-grow: 1; 
+}
+
+.type-box{
+  text-align: center;
+  background: #225091; 
+  color: #FFFFFF;
+  
+}

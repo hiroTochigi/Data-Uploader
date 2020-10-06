@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
 import mondaySdk from "monday-sdk-js";
 import './App.css';
 import ExcelTaker from './ExcelTaker'
 import { Jumbotron } from 'reactstrap';
 import { makeConfiguration } from './modules/makeConfiguration';
 import Update from './modules/update/Update';
+import MakeConnectList from './modules/MakeConnectList/MakeConnectList';
+import Banner from "./Banner"
 import makeConfVariable from "./modules/update/makeConfVariable"
+
 
 const monday = mondaySdk();
 
@@ -59,8 +63,20 @@ class App extends Component {
       )
     })
   }
+  
+  getHeaderIndex = (index) => {
+    this.setState({headerIndex:index})
+  }
 
   getContext = (res) => {
+    /*
+      Retrieve all data to make configuration from Monday side.
+      Get Configuration Board Id
+      Get Target Board (This board is modified by this program) Id
+      Get Target Board Name (The name is used to get configuration file from the Configuration board)
+      Take Connect_list and other configuration data and store in state
+      Get Target Column data
+    */
     const context = res.data;
     const boardIds = context.boardIds || [context.boardId];
 
@@ -76,13 +92,18 @@ class App extends Component {
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
             const confVarialbes = makeConfVariable(boardAllItems, boardName)
-            this.setState({connectList:confVarialbes.connect_list,
-                    headerIndex:0,
-                    connectIds:confVarialbes.ids,
-                    exclusiveLabels: confVarialbes.exclusiveLabelList,
-                    criteria: confVarialbes.criteriaList,
-                  })
-        })
+            if(confVarialbes.length === 0){}
+            else{
+              this.setState({
+                //headerIndedx should be taken from configuration board.
+                headerIndex:0,
+                connectList:confVarialbes.connect_list,
+                connectIds:confVarialbes.ids,
+                exclusiveLabels: confVarialbes.exclusiveLabelList,
+                criteria: confVarialbes.criteriaList,
+              })
+            }
+          })
         monday
           .api(`query { boards(ids:[${targetBoardId}]) { name, columns { title, type, settings_str, id } }}`)
           .then((res) => {
@@ -92,23 +113,11 @@ class App extends Component {
     })
   }
 
-  getRows = (rows) => {
-    this.setState({localItemList: rows})
-  }
-
-  setHaveConf = (val) => {
-    this.setState({haveConf:val})
-  }
-
   makeMondayJsonIndex = (configuration) => {
     return configuration.reduce((mondayJsonIndex, data) => {
       mondayJsonIndex[data['title']] = {'json_index':data['json_index'], 'type':data['type']}
       return mondayJsonIndex
     }, {})
-  }
-
-  setMondayJsonIndex = (configuration) => {
-    this.setState({mondayJsonIndex:this.makeMondayJsonIndex(configuration)})
   }
 
   getTargetLabelSet = (labelTitle, configuration) => {
@@ -172,15 +181,53 @@ class App extends Component {
     }, {})
   }
 
-  setConfiguration = (localItemList, mondayColumns, setHaveConf) => {
-    const { connectList, headerIndex, exclusiveLabels, criteria } = this.state
-    const header = localItemList[headerIndex].map(header => header.trim())
-    this.setState({configuration:makeConfiguration(header, mondayColumns, setHaveConf, connectList)}, () => 
-    this.setMondayJsonIndex(this.state.configuration))
-    this.setState({
-      exclusiveLabels: this.getIndex(exclusiveLabels, this.state.configuration),
-      criteria:  this.getReadyToUseCriteria(criteria, this.state.configuration, connectList)
-    })
+  /*
+  This method is called at ExcelTaker when a local file is uploaded
+  This method does three jobs
+  1. Make header of the local file
+  2. Make configuration file from the three data; local header, target Monday metadata, and configuration board data
+  */
+  processLocalData = (localItemList) => {
+    const { connectList, headerIndex, exclusiveLabels, criteria, mondayColumns } = this.state
+    this.setState({localItemList: localItemList})
+
+    let header = []
+    try{
+      header = localItemList[headerIndex].map(header => header.trim())
+    }catch(error){
+       if (error instanceof TypeError){
+         console.log('Configuration is wrong or upload wrong data')
+       }else{
+         console.log('something wrong')
+       }
+    }
+
+    if(isEmpty(connectList)){
+       this.setState({
+        haveConnectList:false,
+        headerIndex: null,
+        haveConf: false,
+      })
+      alert('There is no connect list')
+    }else{
+      makeConfiguration(header, mondayColumns, connectList).then((conf) => {
+        this.setState({
+          configuration: conf,
+          mondayJsonIndex: this.makeMondayJsonIndex(conf),
+          exclusiveLabels: this.getIndex(exclusiveLabels, conf),
+          criteria: this.getReadyToUseCriteria(criteria, conf, connectList),
+          haveConf: true,
+        })
+      })
+      .catch(err => {
+        this.setState({
+          haveConnectList:false,
+          headerIndex: null,
+          haveConf: false,
+        })
+        alert(err)
+      })
+    }
   }
 
   render() {
@@ -195,21 +242,14 @@ class App extends Component {
             connectIds,
             exclusiveLabels,
             criteria,
+            haveConnectList,
     } = this.state;
     return (
       <div>
-        <div>
-          <Jumbotron className="jumbotron-background">          
-              <h1 className="display-3">Update Monday Board</h1>
-              {
-                haveConf ? 
-                <p className="lead">Click Update Button</p>
-                :  
-                <p className="lead">Upload Excel file or CSV file</p>
-              }                 
-              <hr className="my-2" />
-          </Jumbotron>
-        </div>
+      <Banner 
+        haveConnectList={haveConnectList} 
+        haveConf={haveConf}
+      /> 
         {
           haveConf ? 
           <Update 
@@ -223,15 +263,20 @@ class App extends Component {
             exclusiveLabels={exclusiveLabels}
             criteria={criteria}
           />
-          :  
-          <ExcelTaker
-            getRows={this.getRows}
-            setConfiguration={this.setConfiguration}
-            mondayColumns={mondayColumns}
-            setHaveConf={this.setHaveConf}
-          />
-        }        
-      </div>
+          :
+            haveConnectList ?   
+              <ExcelTaker
+                processLocalData={this.processLocalData}
+              /> 
+              :
+              <MakeConnectList 
+                localItemList={localItemList}
+                mondayColumns={mondayColumns}
+                headerIndex={headerIndex}
+                getHeaderIndex={this.getHeaderIndex}
+              />
+        }             
+        </div>
     );
   }
 }

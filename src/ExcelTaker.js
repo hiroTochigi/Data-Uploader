@@ -13,15 +13,13 @@ class ExcelTaker extends Component {
         uploadedFileName: '',
       }
       this.fileInput = React.createRef();
-      this.getRows = props.getRows.bind(this);
-      this.setConfiguration = props.setConfiguration.bind(this)
-      this.setHaveConf=props.setHaveConf.bind(this)
+      this.processLocalData = props.processLocalData.bind(this)
     }
 
     renderFile = (fileObj, fileName) => {
         //just pass the fileObj as parameter
         const {uploadedFileName} = this.state;
-        const {mondayColumns, setHaveConf} = this.props;
+        //const {mondayColumns} = this.props;
         ExcelRenderer(fileObj, (err, resp) => {
           if(err){
             console.log(err);            
@@ -30,9 +28,8 @@ class ExcelTaker extends Component {
             this.setState({
               dataLoaded: true,
             });
-            this.getRows(resp.rows)
             if (uploadedFileName !== fileName){
-                this.setConfiguration(resp.rows, mondayColumns, setHaveConf)
+                this.processLocalData(resp.rows)
             }
           }
         }); 
