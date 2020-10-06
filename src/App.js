@@ -13,6 +13,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
+      haveCorrectConfBoard: true,
       haveConnectList: true,
       haveConf: false,
       headerIndex: null,
@@ -36,16 +37,24 @@ class App extends Component {
   }
 
   getConfigurationBoardId = (boardIds) => {
+    let result = []
     return new Promise((resolve, reject) => {
       for(let i=0; boardIds.length > i; i++){
         monday
         .api(`query { boards(ids:[${boardIds[i]}]) { name }}`)
         .then((res) => {
           if (res.data.boards[0].name === "Configuration"){
-            resolve(boardIds[i])
+            result.push(boardIds[i])
           }
-        }
-      )}
+          if (i === boardIds.length - 1){
+            if (result.length === 1){
+              resolve(result[0])
+            }else{
+              reject(null)
+            }
+          }
+        })
+      }
     })
   }
   
@@ -61,10 +70,11 @@ class App extends Component {
   }
 
   getContext = (res) => {
+    console.log(res)
     const context = res.data;
     const boardIds = context.boardIds || [context.boardId];
-
     this.getConfigurationBoardId(boardIds).then((confId) => {
+      console.log(confId)
       const confBoardId = confId
       const targetBoardId = boardIds[0] !== confBoardId ? boardIds[0] : boardIds[1]
       this.setState({boardId:targetBoardId})
@@ -76,7 +86,14 @@ class App extends Component {
           .then((res) => {
             const boardAllItems = res.data.boards[0].items;
             const confVarialbes = makeConfVariable(boardAllItems, boardName)
-            this.setState({connectList:confVarialbes.connect_list,
+            if (Object.keys(confVarialbes.connect_list).length === 0){
+              this.setState({haveConnectList:false})
+              return 
+            }
+            this.setState({
+                    haveCorrectConfBoard:true,
+                    haveConnectList:true,
+                    connectList:confVarialbes.connect_list,
                     headerIndex:0,
                     connectIds:confVarialbes.ids,
                     exclusiveLabels: confVarialbes.exclusiveLabelList,
@@ -89,6 +106,9 @@ class App extends Component {
             this.setState({ mondayColumns: res.data.boards[0].columns })
         })
       })
+    })
+    .catch((err) => {
+      this.setState({ haveCorrectConfBoard:false})
     })
   }
 
@@ -185,7 +205,9 @@ class App extends Component {
 
   render() {
     const { localItemList,
+            haveCorrectConfBoard,
             mondayColumns,
+            haveConnectList,
             haveConf,
             configuration,
             mondayJsonIndex,
@@ -202,6 +224,18 @@ class App extends Component {
           <Jumbotron className="jumbotron-background">          
               <h1 className="display-3">Update Monday Board</h1>
               {
+                !haveCorrectConfBoard ?
+                <div>
+                  <p className="lead">No Configuration Board</p>
+                  <p className="lead">Check out your board setting.</p>
+                </div>
+                :
+                !haveConnectList ?
+                <div>
+                  <p className="lead">No configuration file for the target board</p>
+                  <p className="lead">Check out configuration board.</p>
+                </div>
+                :
                 haveConf ? 
                 <p className="lead">Click Update Button</p>
                 :  
@@ -211,6 +245,9 @@ class App extends Component {
           </Jumbotron>
         </div>
         {
+          !haveConnectList || !haveCorrectConfBoard ? 
+          null
+          :
           haveConf ? 
           <Update 
             configuration={configuration}
